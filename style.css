@@ -1,0 +1,45 @@
+body {
+    background-color: black;
+    color: white; 
+}
+
+#game-board, 
+#player-hand {
+    padding: 20px; 
+    background-color: grey;
+    width: 30%;
+    margin: auto; 
+    height: 300px; 
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.game-container {
+    display: flex; 
+    flex-direction: row;
+}
+
+.board-card,
+.hand-card {
+    border-radius: 5px;
+    background: #2c2c2c;
+    box-shadow: inset 20px 20px 60px #1b1b1b,
+            inset -20px -20px 60px #5c5c5c;
+    height: 88px;
+    padding: 5px; 
+}  
+
+.turn-buttons {
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.turn-buttons button {
+    width: 100px; 
+    padding: 10px; 
+    margin-top: 20px; 
+}
