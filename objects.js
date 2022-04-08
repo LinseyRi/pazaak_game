@@ -95,6 +95,8 @@ class Player {
         this.name = playerName; 
         this.playerDeck = new PlayerDeck(); 
         this.hand = new Array(); 
+        this.stand = false; 
+        this.playedInTurn = false; 
         this.createHand(); 
     }
 
@@ -136,26 +138,28 @@ class Player {
             newCardElement.classList.add('hand-card'); 
             newCardElement.value = card.value; 
             newCardElement.onclick = function (e) {
-                // first check to see if a different card has already been selected 
-                // and if so, remove that from the current selection 
-                let parent = e.target.parentNode; 
-                let children = parent.children; 
-                for (let x = 0; x < children.length; x++) {
-                    let child = children[x]; 
-                    if (child.classList.contains('selected-card')) {
-                        child.classList.remove('selected-card'); 
+                if (!self.playedInTurn) {
+                    // first check to see if a different card has already been selected 
+                    // and if so, remove that from the current selection 
+                    let parent = e.target.parentNode; 
+                    let children = parent.children; 
+                    for (let x = 0; x < children.length; x++) {
+                        let child = children[x]; 
+                        if (child.classList.contains('selected-card')) {
+                            child.classList.remove('selected-card'); 
+                        }
                     }
-                }
-                // then find the value of the selected card
-                // and update the card object to be selected as well as the HTML element 
-                var v = e.target.value;
-                e.target.classList.add('selected-card'); 
-                console.log(e.target);
-                for (let i = 0; i < self.hand.length; i++) {
-                    let c = self.hand[i]; 
-                    if (c.value === v) {
-                        c.selected = true; 
-                        break; 
+                    // then find the value of the selected card
+                    // and update the card object to be selected as well as the HTML element 
+                    var v = e.target.value;
+                    e.target.classList.add('selected-card'); 
+                    console.log(e.target);
+                    for (let i = 0; i < self.hand.length; i++) {
+                        let c = self.hand[i]; 
+                        if (c.value === v) {
+                            c.selected = true; 
+                            break; 
+                        }
                     }
                 }
             }
@@ -222,7 +226,7 @@ class GameBoard {
 
 // ------> Game Functions <----------
 
-function endTurnPlay (player=playerOne, gameBoard=GAME_BOARD) {
+function playCard (player=playerOne, gameBoard=GAME_BOARD) {
     var card; 
     for (let i = 0; i < player.hand.length; i++) {
         if (player.hand[i].selected === true) {
@@ -234,17 +238,38 @@ function endTurnPlay (player=playerOne, gameBoard=GAME_BOARD) {
         gameBoard.cardLaid(newBoardCard, "game-board", "board-total", false);
         player.layCard(card, "player-hand"); 
     } 
+    player.playedInTurn = true; 
+    if (gameBoard.total == 20) {
+        stand(player); 
+    }
+    // var next = gameBoard.testWin(); 
+    // if (next == 'continue') {
+    //     MAIN_DECK.renderCard(GAME_BOARD, "game-board", "board-total");
+    // }
+}
+
+function endTurn(player=playerOne, gameBoard=GAME_BOARD) {
+    player.playedInTurn = false; 
     var next = gameBoard.testWin(); 
     if (next == 'continue') {
         MAIN_DECK.renderCard(GAME_BOARD, "game-board", "board-total");
     }
 }
 
-function endTurn(gameBoard=GAME_BOARD) {
-    var next = gameBoard.testWin(); 
-    if (next == 'continue') {
-        MAIN_DECK.renderCard(GAME_BOARD, "game-board", "board-total");
+function stand(player=playerOne) {
+    player.stand = true; 
+    var standingButtons = document.getElementsByClassName("interact-button"); 
+    for (button of standingButtons) {
+        button.removeAttribute("onclick"); 
+        button.classList.add("disabled-button");
     }
+    // Removed below as when you stand you no longer add any cards to the board
+    // mechanic is for playing against opponent  
+    // while (GAME_BOARD.total < 20) {
+    //     endTurn(); 
+    //     console.log(`total after loop: ${GAME_BOARD.total}`); 
+    // }
+    GAME_BOARD.testWin();
 }
 
 function gameEnd(winState) {
@@ -280,6 +305,5 @@ function gameManager(player) {
 
 gameManager(playerOne);
 
-// TODO implement stand functionality
 // TODO implement AI functionality  
 // TODO implement 3 rounds

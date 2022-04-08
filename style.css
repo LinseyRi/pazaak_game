@@ -77,3 +77,8 @@ body {
     animation-duration: 1s;
 }
 
+.disabled-button {
+    background-color: black;
+    text-decoration: line-through;
+    color: red; 
+}
