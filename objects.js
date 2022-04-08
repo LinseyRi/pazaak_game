@@ -187,11 +187,12 @@ class GameBoard {
 
 // ------> Game Functions <----------
 
-function testPlayingCard () {
+function testPlayingCard (player=playerOne) {
     var card; 
-    for (let i = 0; i < playerOne.hand.length; i++) {
-        if (playerOne.hand[i].selected === true) {
-            card = playerOne.hand[i];
+    // TODO player1 currently hard coded - can we avoid this? 
+    for (let i = 0; i < player.hand.length; i++) {
+        if (player.hand[i].selected === true) {
+            card = player.hand[i];
         }
     }
     if (card) {
@@ -210,12 +211,6 @@ const GAME_BOARD = new GameBoard();
 const MAIN_DECK = new MainDeck(); 
 var playerOne = new Player("Player One"); 
 
-// ------> Add Button Events <-----
-
-// end turn button 
-// var endTurnButton = document.getElementById("end-turn");
-// endTurnButton.addEventListener('click', testPlayingCard(playerOne)); 
-
 
 // ---- > Game Manager Functions
 function gameManager(player) {
@@ -224,3 +219,5 @@ function gameManager(player) {
 }
 
 gameManager(playerOne);
+
+// TODO: add animation to selected card
