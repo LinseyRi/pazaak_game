@@ -197,11 +197,17 @@ class GameBoard {
     }
 
     testWin() {
+        console.log("Test win called...")
+        console.log(this.total);
         if ( this.total == 20 ) {
-            return 'win'; 
+            console.log("WIN");
+            gameEnd('win'); 
+            return 'win';
         } else if ( this.total > 20 ) {
-            return 'lose'; 
-        } else if ( this.total < 20 ) {
+            console.log("LOSE"); 
+            gameEnd('lose'); 
+            return 'lose';
+        } else {
             return 'continue';
         }
     }
@@ -210,12 +216,13 @@ class GameBoard {
         let totalTracker = document.getElementById(totalSpanId);
         let runningTotal = this.totalCalculator(this.cards); 
         totalTracker.innerText = runningTotal; 
+        this.total = this.totalCalculator(this.cards);
     }
 }
 
 // ------> Game Functions <----------
 
-function testPlayingCard (player=playerOne, gameBoard=GAME_BOARD) {
+function endTurnPlay (player=playerOne, gameBoard=GAME_BOARD) {
     var card; 
     for (let i = 0; i < player.hand.length; i++) {
         if (player.hand[i].selected === true) {
@@ -227,7 +234,34 @@ function testPlayingCard (player=playerOne, gameBoard=GAME_BOARD) {
         gameBoard.cardLaid(newBoardCard, "game-board", "board-total", false);
         player.layCard(card, "player-hand"); 
     } 
-    MAIN_DECK.renderCard(GAME_BOARD, "game-board", "board-total");
+    var next = gameBoard.testWin(); 
+    if (next == 'continue') {
+        MAIN_DECK.renderCard(GAME_BOARD, "game-board", "board-total");
+    }
+}
+
+function endTurn(gameBoard=GAME_BOARD) {
+    var next = gameBoard.testWin(); 
+    if (next == 'continue') {
+        MAIN_DECK.renderCard(GAME_BOARD, "game-board", "board-total");
+    }
+}
+
+function gameEnd(winState) {
+    console.log("Entering game end phase...")
+    var board = document.getElementById("game-container");
+    var endBanner = document.getElementById("game-end-banner");
+    endBanner.classList.add('active');
+    endBanner.classList.remove('disabled');
+    console.log("Found board...")
+    console.log(board);
+    if (winState == 'win') {
+        endBanner.innerHTML = "You WIN";
+    } else if (winState == 'lose') {
+        endBanner.innerHTML = "You LOSE"; 
+    }
+    console.log("Adding state child...");
+    console.log(endBanner);
 }
 
 
@@ -246,3 +280,6 @@ function gameManager(player) {
 
 gameManager(playerOne);
 
+// TODO implement stand functionality
+// TODO implement AI functionality  
+// TODO implement 3 rounds

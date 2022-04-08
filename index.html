@@ -10,15 +10,19 @@
 <body>
     <h1>Pazaak</h1>
     <h2>Game board total is: <span id="board-total"></span></h2>
-    <div class="game-container">
-        <div id="game-board">
+    <div id="game-container">
+        <div id="game-end-banner" class="game-end-banner disabled">
+
+        </div>
+        <div id="game-board"class="board-box">
 
         </div>
         <div class="turn-buttons">
-            <button id="end-turn" onclick="testPlayingCard()">End Turn</button>
+            <button id="end-turn-play" onclick="endTurnPlay()">Play Card</button>
+            <button id="end-turn" onclick="endTurn()">End Turn</button>
             <button id="stand">Stand</button>
         </div>
-        <div id="player-hand">
+        <div id="player-hand" class="board-box">
     
         </div>
     </div>
