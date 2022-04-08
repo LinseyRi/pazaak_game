@@ -110,6 +110,23 @@ class Player {
         }
     }
 
+    layCard(card, handBoardId) {
+        // remove given card from hand 
+        let newHand = this.hand.filter(currentCard => currentCard.value != card.value); 
+        this.hand = newHand; 
+        // remove given card from the play board 
+        let board = document.getElementById(handBoardId);
+        let children = board.children; 
+        for (let x = 0; x < children.length; x++) {
+            let child = children[x]; 
+            if (child.classList.contains('selected-card')) {
+                board.removeChild(child);
+                break; 
+            }
+        }
+
+    }
+
     renderHand(handElementId) {
         var self = this; 
         this.hand.forEach(function (card) {
@@ -119,8 +136,19 @@ class Player {
             newCardElement.classList.add('hand-card'); 
             newCardElement.value = card.value; 
             newCardElement.onclick = function (e) {
+                // first check to see if a different card has already been selected 
+                // and if so, remove that from the current selection 
+                let parent = e.target.parentNode; 
+                let children = parent.children; 
+                for (let x = 0; x < children.length; x++) {
+                    let child = children[x]; 
+                    if (child.classList.contains('selected-card')) {
+                        child.classList.remove('selected-card'); 
+                    }
+                }
+                // then find the value of the selected card
+                // and update the card object to be selected as well as the HTML element 
                 var v = e.target.value;
-                console.log(v); 
                 e.target.classList.add('selected-card'); 
                 console.log(e.target);
                 for (let i = 0; i < self.hand.length; i++) {
@@ -187,9 +215,8 @@ class GameBoard {
 
 // ------> Game Functions <----------
 
-function testPlayingCard (player=playerOne) {
+function testPlayingCard (player=playerOne, gameBoard=GAME_BOARD) {
     var card; 
-    // TODO player1 currently hard coded - can we avoid this? 
     for (let i = 0; i < player.hand.length; i++) {
         if (player.hand[i].selected === true) {
             card = player.hand[i];
@@ -197,9 +224,8 @@ function testPlayingCard (player=playerOne) {
     }
     if (card) {
         let newBoardCard = new Card(parseInt(card.value)); 
-        // TODO don't hard code in the game_board
-        GAME_BOARD.cardLaid(newBoardCard, "game-board", "board-total", false);
-        // e.target.parentNode.removeChild(card);
+        gameBoard.cardLaid(newBoardCard, "game-board", "board-total", false);
+        player.layCard(card, "player-hand"); 
     } 
     MAIN_DECK.renderCard(GAME_BOARD, "game-board", "board-total");
 }
@@ -220,4 +246,3 @@ function gameManager(player) {
 
 gameManager(playerOne);
 
-// TODO: add animation to selected card

@@ -1,3 +1,8 @@
+@keyframes select {
+    from {box-shadow: none;}
+    to {box-shadow: 6px 4px 2px 1px #0ff;}
+}
+
 body {
     background-color: black;
     color: white; 
@@ -23,9 +28,7 @@ body {
 .board-card,
 .hand-card {
     border-radius: 5px;
-    background: #2c2c2c;
-    box-shadow: inset 20px 20px 60px #1b1b1b,
-            inset -20px -20px 60px #5c5c5c;
+    border: 1px solid black; 
     height: 88px;
     padding: 5px; 
 }  
@@ -45,9 +48,8 @@ body {
 }
 
 .selected-card {
-    border: 50px solid red; 
+    animation-name: select; 
+    animation-fill-mode: forwards;
+    animation-duration: 1s;
 }
 
-#selected-card {
-    border: 10px solid red; 
-}
