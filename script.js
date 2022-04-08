@@ -1,1 +1,0 @@
-import Customer from 'objects'; 
