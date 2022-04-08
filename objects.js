@@ -29,19 +29,11 @@ houseCardImages = {
 class Card {
     constructor(value) {
         this.value = value; 
+        this.selected = false; 
     }
 
     show() {
         console.log(`Card Value: ${this.value}`);
-    }
-
-    renderOnBoard(gameBoard, gameBoardId) {
-        let addedCard = document.createElement('div');
-        addedCard.classList.add('card-slot');
-        addedCard.value = this.value; 
-        addedCard.innerText = this.value; 
-        document.getElementById(gameBoardId).appendChild(addedCard);
-        gameBoard.cards.push(this.card); 
     }
 }
 
@@ -119,6 +111,7 @@ class Player {
     }
 
     renderHand(handElementId) {
+        var self = this; 
         this.hand.forEach(function (card) {
             let newCardElement = document.createElement('img'); 
             let imageSrc = playerCardImages[card.value.toString()];
@@ -126,17 +119,23 @@ class Player {
             newCardElement.classList.add('hand-card'); 
             newCardElement.value = card.value; 
             newCardElement.onclick = function (e) {
-                let newBoardCard = new Card(parseInt(e.target.value)); 
-                GAME_BOARD.cardLaid(newBoardCard, "game-board", "board-total", false);
-                e.target.parentNode.removeChild(e.target);
-            };
+                var v = e.target.value;
+                console.log(v); 
+                e.target.classList.add('selected-card'); 
+                console.log(e.target);
+                for (let i = 0; i < self.hand.length; i++) {
+                    let c = self.hand[i]; 
+                    if (c.value === v) {
+                        c.selected = true; 
+                        break; 
+                    }
+                }
+            }
             document.getElementById(handElementId).appendChild(newCardElement); 
         })    
     }
 
-    playCard(card, gameBoardId) {
-        // TODO implement ability to play card from hand 
-    }
+
 }
 
 class GameBoard {
@@ -186,11 +185,37 @@ class GameBoard {
     }
 }
 
+// ------> Game Functions <----------
+
+function testPlayingCard () {
+    var card; 
+    for (let i = 0; i < playerOne.hand.length; i++) {
+        if (playerOne.hand[i].selected === true) {
+            card = playerOne.hand[i];
+        }
+    }
+    if (card) {
+        let newBoardCard = new Card(parseInt(card.value)); 
+        // TODO don't hard code in the game_board
+        GAME_BOARD.cardLaid(newBoardCard, "game-board", "board-total", false);
+        // e.target.parentNode.removeChild(card);
+    } 
+    MAIN_DECK.renderCard(GAME_BOARD, "game-board", "board-total");
+}
+
+
 // ------> Game Content <----------
 
 const GAME_BOARD = new GameBoard(); 
 const MAIN_DECK = new MainDeck(); 
 var playerOne = new Player("Player One"); 
+
+// ------> Add Button Events <-----
+
+// end turn button 
+// var endTurnButton = document.getElementById("end-turn");
+// endTurnButton.addEventListener('click', testPlayingCard(playerOne)); 
+
 
 // ---- > Game Manager Functions
 function gameManager(player) {
