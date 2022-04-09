@@ -114,8 +114,13 @@ class Player {
 
     layCard(card, handBoardId) {
         // remove given card from hand 
-        let newHand = this.hand.filter(currentCard => currentCard.value != card.value); 
-        this.hand = newHand; 
+        for (let i = 0; i < this.hand.length; i++) {
+            let c = this.hand[i]; 
+            if (c.value == card.value) {
+                this.hand.splice(i, 1); 
+                break; 
+            }
+        }
         // remove given card from the play board 
         let board = document.getElementById(handBoardId);
         let children = board.children; 
@@ -146,9 +151,20 @@ class Player {
                     for (let x = 0; x < children.length; x++) {
                         let child = children[x]; 
                         if (child.classList.contains('selected-card')) {
+                            console.log("Removing selected..."); 
                             child.classList.remove('selected-card'); 
+                            console.log(child); 
+                            console.log(`Child value: ${child.value}`); 
+                        }    
+                    }
+                    for (let i = 0; i < self.hand.length; i++) {
+                        let c = self.hand[i]; 
+                        if (c.selected) {
+                            c.selected = false; 
                         }
                     }
+                    console.log("cleared state:");
+                    console.log(self.hand);
                     // then find the value of the selected card
                     // and update the card object to be selected as well as the HTML element 
                     var v = e.target.value;
@@ -161,6 +177,8 @@ class Player {
                             break; 
                         }
                     }
+                    console.log("Selected state: ");
+                    console.log(self.hand); 
                 }
             }
             document.getElementById(handElementId).appendChild(newCardElement); 
@@ -185,7 +203,6 @@ class GameBoard {
     }
 
     cardLaid(card, gameBoardId, totalSpanId, house) {
-        console.log(house);
         this.cards.push(card); 
         let newCardElement = document.createElement('img');
         if (house == true) {
@@ -201,14 +218,10 @@ class GameBoard {
     }
 
     testWin() {
-        console.log("Test win called...")
-        console.log(this.total);
         if ( this.total == 20 ) {
-            console.log("WIN");
             gameEnd('win'); 
             return 'win';
         } else if ( this.total > 20 ) {
-            console.log("LOSE"); 
             gameEnd('lose'); 
             return 'lose';
         } else {
@@ -273,22 +286,16 @@ function stand(player=playerOne) {
 }
 
 function gameEnd(winState) {
-    console.log("Entering game end phase...")
     var board = document.getElementById("game-container");
     var endBanner = document.getElementById("game-end-banner");
     endBanner.classList.add('active');
     endBanner.classList.remove('disabled');
-    console.log("Found board...")
-    console.log(board);
     if (winState == 'win') {
         endBanner.innerHTML = "You WIN";
     } else if (winState == 'lose') {
         endBanner.innerHTML = "You LOSE"; 
     }
-    console.log("Adding state child...");
-    console.log(endBanner);
 }
-
 
 // ------> Game Content <----------
 
@@ -307,3 +314,13 @@ gameManager(playerOne);
 
 // TODO implement AI functionality  
 // TODO implement 3 rounds
+
+
+// ------> Add Event Listeners <----------
+document.getElementById("end-turn-play").addEventListener("click", function () {
+    playCard(playerOne, GAME_BOARD);
+});
+document.getElementById("end-turn").addEventListener("click", function () {
+    endTurn(); 
+});
+document.getElementById("stand").addEventListener("click", stand); 
