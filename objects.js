@@ -79,8 +79,10 @@ class MainDeck {
         // gameBoard - gameBoard object
         // boardElementId - String referring to HTML div 
         // totalSpanId - String referring to HTML span 
+        console.log("Laying card...");
         let card = this.drawCard(); 
         gameBoard.cardLaid(card, boardElementId, totalSpanId, true);
+        console.log("Laid card..."); 
     }
 }
 
@@ -100,6 +102,8 @@ class Player {
     constructor(playerName, role) {
         this.name = playerName; 
         this.role = role; 
+        this.turnDrawnCard; 
+        this.turn = false; 
         this.playerDeck = new PlayerDeck(); 
         this.hand = new Array(); 
         this.stand = false; 
@@ -292,8 +296,10 @@ function endTurn(player, gameBoard, gameBoardId, totalSpanId) {
     player.playedInTurn = false; // if the player has laid a card this turn, not able to lay again. This resets that restriction
     var next = gameBoard.testWin(); 
     if (next == 'continue') {
+        console.log("origin: endTurn function"); 
         MAIN_DECK.renderCard(gameBoard, gameBoardId, totalSpanId);
     }
+    round(playerOne, playerTwo); 
 }
 
 function stand(player, interactButtonClass, gameBoard) {
@@ -314,6 +320,7 @@ function stand(player, interactButtonClass, gameBoard) {
     //     console.log(`total after loop: ${GAME_BOARD.total}`); 
     // }
     gameBoard.testWin(); // TODO rework testWin function to account for both players
+    round(playerOne, playerTwo); 
 }
 
 function gameEnd(winState) {
@@ -327,6 +334,55 @@ function gameEnd(winState) {
         endBanner.innerHTML = "You LOSE"; 
     }
 }
+
+function round(firstPlayer, secondPlayer) {
+    if (firstPlayer.turn) {
+        let playerButtons = document.getElementsByClassName("interact-button-1");
+        for (button of playerButtons) {
+            button.classList.remove("temp-disabled-button");
+        }
+        let tempButtons = document.getElementsByClassName("interact-button-2");
+        for (button of tempButtons) {
+            button.classList.add("temp-disabled-button");
+        }
+        document.getElementById("current-player").innerHTML = firstPlayer.name; 
+
+        // add event listeners to active player 
+        document.getElementById("play-card-1").addEventListener("click", layPlayerOneCard);
+        document.getElementById("end-turn-1").addEventListener("click", endPlayerOneTurn);
+        document.getElementById("stand-1").addEventListener("click", playerOneStand); 
+
+        // remove event listeners from player whose turn it is not 
+        document.getElementById("play-card-2").removeEventListener("click", layPlayerTwoCard); 
+        document.getElementById("end-turn-2").removeEventListener("click", endPlayerTwoTurn);
+        document.getElementById("stand-2").removeEventListener("click", playerTwoStand);
+        firstPlayer.turn = false; 
+        secondPlayer.turn = true; 
+    } else if (secondPlayer.turn) {
+        let playerButtons = document.getElementsByClassName("interact-button-2");
+        for (button of playerButtons) {
+            button.classList.remove("temp-disabled-button");
+        }
+        let tempButtons = document.getElementsByClassName("interact-button-1");
+        for (button of tempButtons) {
+            button.classList.add("temp-disabled-button");
+        }
+        document.getElementById("current-player").innerHTML = secondPlayer.name; 
+
+        // add event listeners to current player 
+        document.getElementById("play-card-2").addEventListener("click", layPlayerTwoCard); 
+        document.getElementById("end-turn-2").addEventListener("click", endPlayerTwoTurn);
+        document.getElementById("stand-2").addEventListener("click", playerTwoStand);
+
+        // remove event listeners from past player 
+        document.getElementById("play-card-1").removeEventListener("click", layPlayerOneCard);
+        document.getElementById("end-turn-1").removeEventListener("click", endPlayerOneTurn);
+        document.getElementById("stand-1").removeEventListener("click", playerOneStand);
+        firstPlayer.turn = true; 
+        secondPlayer.turn = false;  
+    }
+}
+
 
 // ------> Game Content <----------
 
@@ -346,9 +402,14 @@ function gameManager() {
     playerOne.renderHand("player-hand-1");
     MAIN_DECK.renderCard(playerTwoBoard, "game-board-2", "board-total-2");
     playerTwo.renderHand("player-hand-2");
+
+    playerOne.turn = true; 
+    round(playerOne, playerTwo); 
 }
 
 gameManager();
+
+
 
 // TODO add a player 2
 // TODO implement round-robin turn style 
@@ -357,26 +418,31 @@ gameManager();
 // TODO implement 3 rounds
 
 
-// ------> Add Event Listeners <----------
+// ------> Event Listener Functions <----------
+
 
 // ---> Player One Event Listeners 
-document.getElementById("play-card-1").addEventListener("click", function () {
+function layPlayerOneCard() {
     playCard(playerOne, "player-hand-1", playerOneBoard, "game-board-1", "board-total-1");
-});
-document.getElementById("end-turn-1").addEventListener("click", function () {
+}
+
+function endPlayerOneTurn() {
     endTurn(playerOne, playerOneBoard, "game-board-1", "board-total-1"); 
-});
-document.getElementById("stand-1").addEventListener("click", function () {
+}
+
+function playerOneStand() {
     stand(playerOne, "interact-button-1", playerOneBoard); 
-}); 
+}
 
 // ---> Player Two Event Listeners 
-document.getElementById("play-card-2").addEventListener("click", function () {
-    playCard(playerTwo, "player-hand-2", playerTwoBoard, "game-board-2", "board-total-2"); 
-}); 
-document.getElementById("end-turn-2").addEventListener("click", function () {
+function layPlayerTwoCard() {
+    playCard(playerTwo, "player-hand-2", playerTwoBoard, "game-board-2", "board-total-2");
+}
+
+function endPlayerTwoTurn() {
     endTurn(playerTwo, playerTwoBoard, "game-board-2", "board-total-2"); 
-});
-document.getElementById("stand-2").addEventListener("click", function () {
+}
+
+function playerTwoStand() {
     stand(playerTwo, "interact-button-2", playerTwoBoard); 
-});
+}

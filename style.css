@@ -16,7 +16,9 @@ body {
 
 .header {
     display: flex; 
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
 
 
@@ -70,6 +72,7 @@ body {
     width: 100px; 
     padding: 10px; 
     margin: 5px; 
+    cursor: pointer;
 }
 
 .selected-card {
@@ -92,4 +95,9 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
+}
+
+.temp-disabled-button {
+    background-color: rgb(110, 103, 103);
+    cursor: not-allowed;
 }
