@@ -73,6 +73,12 @@ class MainDeck {
     }
 
     renderCard(gameBoard, boardElementId, totalSpanId) {
+        // function: draw a card from the main deck, 
+        // lay this on the player's game board 
+        // call gameBoard function to update board elements
+        // gameBoard - gameBoard object
+        // boardElementId - String referring to HTML div 
+        // totalSpanId - String referring to HTML span 
         let card = this.drawCard(); 
         gameBoard.cardLaid(card, boardElementId, totalSpanId, true);
     }
@@ -203,6 +209,10 @@ class GameBoard {
     }
 
     cardLaid(card, gameBoardId, totalSpanId, house) {
+        // card - Card object to add to board 
+        // gameBoardId - String referring to HTML div on which card should be displayed
+        // totalSpanId - String referring to HTML span in which text shows total
+        // house - Boolean, whether card added is from the house or a player 
         this.cards.push(card); 
         let newCardElement = document.createElement('img');
         if (house == true) {
@@ -299,19 +309,27 @@ function gameEnd(winState) {
 
 // ------> Game Content <----------
 
-const GAME_BOARD = new GameBoard(); 
 const MAIN_DECK = new MainDeck(); 
+
+// ---> Player One Content
+const playerOneBoard = new GameBoard(); 
 var playerOne = new Player("Player One"); 
 
+// ---> Player Two Content 
+const playerTwoBoard = new GameBoard(); 
+var playerTwo = new Player("Player Two");
 
 // ---- > Game Manager Functions
-function gameManager(player) {
-    player.renderHand("player-hand");
-    MAIN_DECK.renderCard(GAME_BOARD, "game-board", "board-total");
+function gameManager() {
+    MAIN_DECK.renderCard(playerOneBoard, "game-board-1", "board-total-1");
+    playerOne.renderHand("player-hand-1");
+    MAIN_DECK.renderCard(playerTwoBoard, "game-board-2", "board-total-2");
+    playerTwo.renderHand("player-hand-2");
 }
 
-gameManager(playerOne);
+gameManager();
 
+// TODO add a player 2
 // TODO implement AI functionality  
 // TODO implement 3 rounds
 

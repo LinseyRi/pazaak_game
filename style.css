@@ -14,16 +14,11 @@ body {
     color: white; 
 }
 
-.board-box {
-    padding: 20px; 
-    background-color: grey;
-    width: 30%;
-    margin: auto; 
-    height: 300px; 
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+.header {
+    display: flex; 
+    justify-content: center;
 }
+
 
 .game-end-banner {
     width: 100%;
@@ -47,6 +42,13 @@ body {
 #game-container {
     display: flex; 
     flex-direction: row;
+    width: 100%; 
+    justify-content: space-around;
+}
+
+.player-board {
+    padding: 20px; 
+    border: 10px dotted grey;
 }
 
 .board-card,
@@ -58,17 +60,17 @@ body {
 }  
 
 .turn-buttons {
-    height: 300px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+    gap: 10px; 
 }
 
 .turn-buttons button {
     width: 100px; 
     padding: 10px; 
-    margin-top: 20px; 
+    margin: 5px; 
 }
 
 .selected-card {
@@ -81,4 +83,14 @@ body {
     background-color: black;
     text-decoration: line-through;
     color: red; 
+}
+
+.board-box {
+    padding: 20px; 
+    background-color: grey;
+    margin: auto; 
+    height: 100px; 
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
 }

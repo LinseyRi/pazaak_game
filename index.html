@@ -8,23 +8,46 @@
     <title>Pazaak</title>
 </head>
 <body>
-    <h1>Pazaak</h1>
-    <h2>Game board total is: <span id="board-total"></span></h2>
+    <div class="header">
+        <h1 class="header">Pazaak</h1>
+    </div>
     <div id="game-container">
         <div id="game-end-banner" class="game-end-banner disabled">
+            
+        </div>
+        
+        <!-- player 1 board -->
+        <div id="player-one" class="player-board">
+            <h2>Player 1 board total is: <span id="board-total-1"></span></h2>
+            <div id="game-board-1" class="board-box">
 
+            </div>
+            <div class="turn-buttons">
+                <button id="end-turn-play-1" class="interact-button">Play Card</button>
+                <button id="end-turn-1" class="interact-button">End Turn</button>
+                <button id="stand-1" class="interact-button">Stand</button>
+            </div>
+            <div id="player-hand-1" class="board-box">
+        
+            </div>
         </div>
-        <div id="game-board"class="board-box">
 
+        <!-- player 2 board -->
+        <div id="player-two" class="player-board">
+            <h2>Player 2 board total is: <span id="board-total-2"></span></h2>
+            <div id="game-board-2" class="board-box">
+
+            </div>
+            <div class="turn-buttons">
+                <button id="end-turn-play-2" class="interact-button">Play Card</button>
+                <button id="end-turn-2" class="interact-button">End Turn</button>
+                <button id="stand-2" class="interact-button">Stand</button>
+            </div>
+            <div id="player-hand-2" class="board-box">
+        
+            </div>
         </div>
-        <div class="turn-buttons">
-            <button id="end-turn-play" class="interact-button">Play Card</button>
-            <button id="end-turn" class="interact-button">End Turn</button>
-            <button id="stand" class="interact-button">Stand</button>
-        </div>
-        <div id="player-hand" class="board-box">
-    
-        </div>
+        
     </div>
     
     <script src="objects.js"></script>  
