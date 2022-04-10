@@ -48,7 +48,6 @@ body {
 
 .player-board {
     padding: 20px; 
-    border: 10px dotted grey;
 }
 
 .board-card,
@@ -89,7 +88,7 @@ body {
     padding: 20px; 
     background-color: grey;
     margin: auto; 
-    height: 100px; 
+    width: 400px; 
     display: flex;
     flex-wrap: wrap;
     gap: 20px;

@@ -97,8 +97,9 @@ class PlayerDeck extends MainDeck {
 }
 
 class Player {
-    constructor(playerName) {
+    constructor(playerName, role) {
         this.name = playerName; 
+        this.role = role; 
         this.playerDeck = new PlayerDeck(); 
         this.hand = new Array(); 
         this.stand = false; 
@@ -230,11 +231,14 @@ class GameBoard {
     testWin() {
         if ( this.total == 20 ) {
             gameEnd('win'); 
+            console.log('WIN');
             return 'win';
         } else if ( this.total > 20 ) {
+            console.log('LOSE');
             gameEnd('lose'); 
             return 'lose';
         } else {
+            console.log('continue');
             return 'continue';
         }
     }
@@ -249,21 +253,34 @@ class GameBoard {
 
 // ------> Game Functions <----------
 
-function playCard (player=playerOne, gameBoard=GAME_BOARD) {
+function playCard (player, playerHandId, gameBoard, gameBoardId, totalSpanId) {
+    // Given a player and a game board, will search players hand for selected card and play it on the board
+    // player - Player object 
+    // gameBoard - GameBoard object to add card to
+
+    // find if there is a card in player's hand to play -
+    // it will be marked as selected 
     var card; 
     for (let i = 0; i < player.hand.length; i++) {
         if (player.hand[i].selected === true) {
             card = player.hand[i];
         }
     }
+
+    // if a card has been selected,
     if (card) {
         let newBoardCard = new Card(parseInt(card.value)); 
-        gameBoard.cardLaid(newBoardCard, "game-board", "board-total", false);
-        player.layCard(card, "player-hand"); 
+        gameBoard.cardLaid(newBoardCard, gameBoardId, totalSpanId, false);
+        player.layCard(card, playerHandId); 
     } 
     player.playedInTurn = true; 
     if (gameBoard.total == 20) {
-        stand(player); 
+        console.log("out-STANDING");
+        if (player.role == 1) {
+            stand(player, "interact-button-1", playerOneBoard);
+        } else if (player.role == 2) {
+            stand(player, "interact-button-2", playerTwoBoard); 
+        }
     }
     // var next = gameBoard.testWin(); 
     // if (next == 'continue') {
@@ -271,17 +288,21 @@ function playCard (player=playerOne, gameBoard=GAME_BOARD) {
     // }
 }
 
-function endTurn(player=playerOne, gameBoard=GAME_BOARD) {
-    player.playedInTurn = false; 
+function endTurn(player, gameBoard, gameBoardId, totalSpanId) {
+    player.playedInTurn = false; // if the player has laid a card this turn, not able to lay again. This resets that restriction
     var next = gameBoard.testWin(); 
     if (next == 'continue') {
-        MAIN_DECK.renderCard(GAME_BOARD, "game-board", "board-total");
+        MAIN_DECK.renderCard(gameBoard, gameBoardId, totalSpanId);
     }
 }
 
-function stand(player=playerOne) {
+function stand(player, interactButtonClass, gameBoard) {
+    // removes ability of given player to use interactive buttons 
+    // player - Player object
+    // interactButtonClass - String of class name of player HTML buttons
+    // gameBoard - player's game board Object 
     player.stand = true; 
-    var standingButtons = document.getElementsByClassName("interact-button"); 
+    var standingButtons = document.getElementsByClassName(interactButtonClass); 
     for (button of standingButtons) {
         button.removeAttribute("onclick"); 
         button.classList.add("disabled-button");
@@ -292,7 +313,7 @@ function stand(player=playerOne) {
     //     endTurn(); 
     //     console.log(`total after loop: ${GAME_BOARD.total}`); 
     // }
-    GAME_BOARD.testWin();
+    gameBoard.testWin(); // TODO rework testWin function to account for both players
 }
 
 function gameEnd(winState) {
@@ -313,11 +334,11 @@ const MAIN_DECK = new MainDeck();
 
 // ---> Player One Content
 const playerOneBoard = new GameBoard(); 
-var playerOne = new Player("Player One"); 
+var playerOne = new Player("Player One", 1); 
 
 // ---> Player Two Content 
 const playerTwoBoard = new GameBoard(); 
-var playerTwo = new Player("Player Two");
+var playerTwo = new Player("Player Two", 2);
 
 // ---- > Game Manager Functions
 function gameManager() {
@@ -330,15 +351,32 @@ function gameManager() {
 gameManager();
 
 // TODO add a player 2
+// TODO implement round-robin turn style 
 // TODO implement AI functionality  
+// TODO flip for who starts round
 // TODO implement 3 rounds
 
 
 // ------> Add Event Listeners <----------
-document.getElementById("end-turn-play").addEventListener("click", function () {
-    playCard(playerOne, GAME_BOARD);
+
+// ---> Player One Event Listeners 
+document.getElementById("play-card-1").addEventListener("click", function () {
+    playCard(playerOne, "player-hand-1", playerOneBoard, "game-board-1", "board-total-1");
 });
-document.getElementById("end-turn").addEventListener("click", function () {
-    endTurn(); 
+document.getElementById("end-turn-1").addEventListener("click", function () {
+    endTurn(playerOne, playerOneBoard, "game-board-1", "board-total-1"); 
 });
-document.getElementById("stand").addEventListener("click", stand); 
+document.getElementById("stand-1").addEventListener("click", function () {
+    stand(playerOne, "interact-button-1", playerOneBoard); 
+}); 
+
+// ---> Player Two Event Listeners 
+document.getElementById("play-card-2").addEventListener("click", function () {
+    playCard(playerTwo, "player-hand-2", playerTwoBoard, "game-board-2", "board-total-2"); 
+}); 
+document.getElementById("end-turn-2").addEventListener("click", function () {
+    endTurn(playerTwo, playerTwoBoard, "game-board-2", "board-total-2"); 
+});
+document.getElementById("stand-2").addEventListener("click", function () {
+    stand(playerTwo, "interact-button-2", playerTwoBoard); 
+});
