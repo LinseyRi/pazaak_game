@@ -79,10 +79,10 @@ class MainDeck {
         // gameBoard - gameBoard object
         // boardElementId - String referring to HTML div 
         // totalSpanId - String referring to HTML span 
-        console.log("Laying card...");
+        // console.log("Laying card...");
         let card = this.drawCard(); 
         gameBoard.cardLaid(card, boardElementId, totalSpanId, true, player);
-        console.log("Laid card..."); 
+        // console.log("Laid card..."); 
     }
 }
 
@@ -125,6 +125,37 @@ class Player {
         }
     }
 
+    resetBoard() { 
+        this.runningTotal = 0; 
+        this.stand = false; 
+    }
+
+    removeWinNodes(winHTMLSpan) {
+        let myNode = document.getElementById(winHTMLSpan);
+        while (myNode.firstChild) {
+            myNode.removeChild(myNode.lastChild);
+        }
+    }
+    
+    addWinNodes(winHTMLSpan) {
+        let parent = document.getElementById(winHTMLSpan);
+        let winsToTrack = this.wins;
+        for (let i = 1; i <= 3; i++) {
+            let newWinElement = document.createElement('span'); // removed 'i' element due to bug 
+            if (winsToTrack > 0) {
+                // newWinElement.classList.add("fa-solid"); 
+                // newWinElement.classList.add("fa-solid-notch"); 
+                newWinElement.innerHTML = 'W';
+                winsToTrack--; 
+            } else {
+                // newWinElement.classList.add('fa-solid');
+                // newWinElement.classList.add('fa-circle');
+                newWinElement.innerHTML = 'O';
+            }
+            parent.appendChild(newWinElement); 
+        }
+    }
+
     layCard(card, handBoardId) {
         // remove given card from hand 
         for (let i = 0; i < this.hand.length; i++) {
@@ -164,10 +195,10 @@ class Player {
                     for (let x = 0; x < children.length; x++) {
                         let child = children[x]; 
                         if (child.classList.contains('selected-card')) {
-                            console.log("Removing selected..."); 
+                            // console.log("Removing selected..."); 
                             child.classList.remove('selected-card'); 
-                            console.log(child); 
-                            console.log(`Child value: ${child.value}`); 
+                            // console.log(child); 
+                            // console.log(`Child value: ${child.value}`); 
                         }    
                     }
                     for (let i = 0; i < self.hand.length; i++) {
@@ -176,13 +207,13 @@ class Player {
                             c.selected = false; 
                         }
                     }
-                    console.log("cleared state:");
-                    console.log(self.hand);
+                    // console.log("cleared state:");
+                    // console.log(self.hand);
                     // then find the value of the selected card
                     // and update the card object to be selected as well as the HTML element 
                     var v = e.target.value;
                     e.target.classList.add('selected-card'); 
-                    console.log(e.target);
+                    // console.log(e.target);
                     for (let i = 0; i < self.hand.length; i++) {
                         let c = self.hand[i]; 
                         if (c.value === v) {
@@ -190,8 +221,8 @@ class Player {
                             break; 
                         }
                     }
-                    console.log("Selected state: ");
-                    console.log(self.hand); 
+                    // console.log("Selected state: ");
+                    // console.log(self.hand); 
                 }
             }
             document.getElementById(handElementId).appendChild(newCardElement); 
@@ -242,12 +273,12 @@ class GameBoard {
 
     testWin(player) {
         if ( this.total == 20 ) {
-            gameEnd(player, 'win'); 
+            // gameEnd(player, 'win'); 
             console.log('WIN');
             return 'win';
         } else if ( this.total > 20 ) {
             console.log('LOSE');
-            gameEnd(player, 'lose'); 
+            // gameEnd(player, 'lose'); 
             return 'lose';
         } else {
             console.log('continue');
@@ -257,11 +288,11 @@ class GameBoard {
 
     roundEnd(firstPlayer, secondPlayer) {
         if (firstPlayer.runningTotal == 20 && secondPlayer.runningTotal == 20) {
-            gameEnd(firstPlayer, 'draw');
+            endCompleteRound(firstPlayer, 'draw');
             return 'draw'; 
         }
         if (firstPlayer.runningTotal > 20 && secondPlayer.runningTotal > 20) {
-            gameEnd(firstPlayer, 'draw');
+            endCompleteRound(firstPlayer, 'draw');
             return 'draw'; 
         }
         console.log(`Standing State: ${firstPlayer.stand && secondPlayer.stand}.`)
@@ -269,19 +300,19 @@ class GameBoard {
             let p1Dif = 20 - firstPlayer.runningTotal;
             let p2Dif = 20 - secondPlayer.runningTotal; 
             if (firstPlayer.runningTotal > 20 && secondPlayer.runningTotal <= 20) {
-                gameEnd(secondPlayer, 'win'); 
+                endCompleteRound(secondPlayer, 'win'); 
             } else if (secondPlayer.runningTotal > 20 && firstPlayer.runningTotal <= 20) {
-                gameEnd(firstPlayer, 'win'); 
+                endCompleteRound(firstPlayer, 'win'); 
             } else if (firstPlayer.runningTotal == 20) {
-                gameEnd(firstPlayer, 'win'); 
+                endCompleteRound(firstPlayer, 'win'); 
             } else if (secondPlayer.runningTotal == 20) {
-                gameEnd(secondPlayer, 'win'); 
+                endCompleteRound(secondPlayer, 'win'); 
             } else if (firstPlayer.runningTotal == secondPlayer.runningTotal) {
-                gameEnd(firstPlayer, 'draw');
+                endCompleteRound(firstPlayer, 'draw');
             } else if (p1Dif < p2Dif) {
-                gameEnd(firstPlayer, 'win');
+                endCompleteRound(firstPlayer, 'win');
             } else if (p2Dif < p1Dif) {
-                gameEnd(secondPlayer, 'win'); 
+                endCompleteRound(secondPlayer, 'win'); 
             }
             return 'win'; 
         } else if (firstPlayer.runningTotal > 20 && !firstPlayer.stand) {
@@ -345,7 +376,7 @@ function playCard (player, playerHandId, gameBoard, gameBoardId, totalSpanId) {
 
 function endTurn(player, gameBoard, gameBoardId, totalSpanId) {
     player.playedInTurn = false; // if the player has laid a card this turn, not able to lay again. This resets that restriction
-    var next = gameBoard.roundEnd(playerOne, playerTwo); 
+    var next = gameBoard.roundEnd(playerOne, playerTwo); // TODO this might need putting back in 
     console.log("Ending turn...");
     if (next == 'continue') {
         // mainDeck.renderCard(gameBoard, gameBoardId, totalSpanId);
@@ -372,7 +403,7 @@ function stand(player, interactButtonClass, gameBoard) {
     endBothTurns(playerOne, playerTwo); 
 }
 
-function gameEnd(player, winState) {
+function gameEnd(player, winState) { // TODO change to apply only after 3 wins 
     var board = document.getElementById("game-container");
     var endBanner = document.getElementById("game-end-banner");
     endBanner.classList.add('active');
@@ -383,6 +414,15 @@ function gameEnd(player, winState) {
         endBanner.innerHTML = `${player.name} LOSES`; 
     } else if (winState == 'draw') {
         endBanner.innerHTML = `It's a DRAW`
+    }
+}
+
+function endCompleteRound(player, winState) {
+    if (winState == 'draw') {
+        startNewRound(); 
+    } else if (winState == 'win') {
+        player.wins = player.wins + 1
+        startNewRound(); 
     }
 }
 
@@ -421,9 +461,9 @@ async function endBothTurns(firstPlayer, secondPlayer) {
                 stand(firstPlayer, "interact-button-1", playerOneBoard);
             }
 
-            console.log("pre-wait");
+            // console.log("pre-wait");
             await sleep(1000);
-            console.log("post-wait");
+            // console.log("post-wait");
             mainDeck.renderCard(playerOneBoard, "game-board-1", "board-total-1", firstPlayer);
         } 
         if (firstPlayer.stand) {
@@ -462,14 +502,23 @@ async function endBothTurns(firstPlayer, secondPlayer) {
                 stand(secondPlayer, "interact-button-2", playerTwoBoard); 
             }
 
-            console.log("pre-wait");
+            // console.log("pre-wait");
             await sleep(1000);
-            console.log("post-wait");
+            // console.log("post-wait");
             mainDeck.renderCard(playerTwoBoard, "game-board-2", "board-total-2", secondPlayer);
         } 
         if (secondPlayer.stand) {
             endTurn(playerTwo, playerTwoBoard, "game-board-2", "board-total-2");
         }
+    }
+}
+
+function clearBoard(boardElementId) {
+    let board = document.getElementById(boardElementId); 
+    let children = board.children; 
+    for (let x = 0; x < children.length; x++) {
+        let child = children[x]; 
+        board.removeChild(child); 
     }
 }
 
@@ -493,79 +542,49 @@ var playerTwo = new Player("Player Two", 2);
 
 // ---- > Game Manager Functions
 function startNewRound() {
-    if (roundCounter > 3) {
-        console.log("End of game"); 
-        
-    } else {
-        console.log("starting game.")
-        // reset the house deck (recreate and shuffle)
-
-        // clear all cards currently counted on "game-board-1" and playerOneBoard
-        playerOne.runningTotal = 0;
-        playerOneBoard.clearCards();
-        let playerOneBoardElement = document.getElementById("game-board-1"); 
-        let oneChildren = playerOneBoardElement.children; 
-        for (let x = 0; x < oneChildren.length; x++) {
-            let child = oneChildren[x]; 
-            oneChildren.removeChild(child); 
-        }
-
-        // clear all cards currently counted on "game-board-2" and playerTwoBoard 
-        playerTwo.runningTotal = 0; 
-        playerTwoBoard.clearCards(); 
-        let playerTwoBoardElement = document.getElementById("game-board-2"); 
-        let twoChildren = playerTwoBoardElement.children; 
-        for (let x = 0; x < oneChildren.length; x++) {
-            let child = twoChildren[x]; 
-            twoChildren.removeChild(child); 
-        }
-
-        // for each win in player's hand, remove one fa-circle-notch and fill with fa-circle
-        let oneWins = document.getElementById("win-streak-1");
-        let twoWins = document.getElementById("win-streak-2"); 
-
-        // remove current win tracking 
-        let oneWinChildren = oneWins.children; 
-        let twoWinChildren = twoWins.children; 
-        for (let x = 0; x < oneWins.length; x++) {
-            let child = oneWinChildren[x]; 
-            oneWinChildren.removeChild(child); 
-        }
-        for (let x = 0; x < twoWins.length; x++) {
-            let child = twoWinChildren[x]; 
-            twoWinChildren.removeChild(child); 
-        }
-
-
-        console.log(`PLAYER 1 WINS ARE: ${playerOne.wins}`)
-        for (let i = 1; i <= 3; i++) {
-            var newWinElement = document.createElement('i');
-            if (playerOne.wins <= i) {
-                newWinElement.classList.add('fa-solid');
-                newWinElement.classList.add('fa-circle-notch');
-            } else {
-                newWinElement.classList.add('fa-solid');
-                newWinElement.classList.add('fa-circle');
-            }
-            oneWins.appendChild(newWinElement); 
-        }
-        console.log(`PLAYER 2 WINS ARE: ${playerTwo.wins}`)
-        for (let i = 1; i <= 3; i++) {
-            var newWinElement = document.createElement('i');
-            if (playerTwo.wins <= i) {
-                newWinElement.classList.add('fa-solid');
-                newWinElement.classList.add('fa-circle-notch');
-            } else {
-                newWinElement.classList.add('fa-solid');
-                newWinElement.classList.add('fa-circle');
-            }
-            twoWins.appendChild(newWinElement); 
-        }
+    if (playerOne.wins == 3 && playerTwo.wins < 3) {
+        gameEnd(playerOne, 'win');
+        return 'end'; 
+    } else if (playerTwo.wins == 3 && playerOne.wins < 3) {
+        gameEnd(playerTwo, 'win');
+        return 'end'; 
     }
-    playerOne.renderHand("player-hand-1");
-    playerTwo.renderHand("player-hand-2");
+    // console.log("starting game.")
+    // reset the house deck (recreate and shuffle)
+    mainDeck = new MainDeck(); 
+
+    // clear all cards currently counted on "game-board-1" and playerOneBoard
+    playerOne.resetBoard(); 
+    playerOneBoard.clearCards();
+    clearBoard("game-board-1"); 
+
+    // clear all cards currently counted on "game-board-2" and playerTwoBoard 
+    playerTwo.resetBoard(); 
+    playerTwoBoard.clearCards(); 
+    clearBoard("game-board-2");
+    
+
+    // for each win in player's hand, remove one fa-circle-notch and fill with fa-circle
+    playerOne.removeWinNodes("win-streak-1"); 
+    playerTwo.removeWinNodes("win-streak-2");
+    
+    playerOne.addWinNodes("win-streak-1"); 
+    playerTwo.addWinNodes("win-streak-2"); 
+
+
+    let oneHandChildrenCurrently = document.getElementById("player-hand-1").children;
+    let twoHandChildrenCurrently = document.getElementById("player-hand-2").children; 
+
+    if (playerOne.hand.length > 0 && oneHandChildrenCurrently.length == 0) {
+        playerOne.renderHand("player-hand-1");
+    }
+
+    if (playerTwo.hand.length > 0 && twoHandChildrenCurrently.length == 0) {
+        playerTwo.renderHand("player-hand-2");
+    }
 
     playerOne.turn = true; 
+    playerTwo.turn = false; 
     endBothTurns(playerOne, playerTwo); 
 }
 
