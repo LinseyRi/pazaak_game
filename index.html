@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/62bdd3af51.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
     <title>Pazaak</title>
 </head>
@@ -19,6 +20,7 @@
         
         <!-- player 1 board -->
         <div id="player-one" class="player-board">
+            <p>WINS: <span id="win-streak-1" class="win-streak"></span></p>
             <h2>Player 1 board total is: <span id="board-total-1"></span></h2>
             <div id="game-board-1" class="board-box">
 
@@ -35,6 +37,8 @@
 
         <!-- player 2 board -->
         <div id="player-two" class="player-board">
+            <!-- change to fa-circle when win -->
+            <p>WINS: <span id="win-streak-2" class="win-streak"></span></p>
             <h2>Player 2 board total is: <span id="board-total-2"></span></h2>
             <div id="game-board-2" class="board-box">
 

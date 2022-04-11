@@ -105,6 +105,7 @@ class Player {
         this.turnDrawnCard; 
         this.turn = false; 
         this.runningTotal = 0; 
+        this.wins = 0; 
         this.playerDeck = new PlayerDeck(); 
         this.hand = new Array(); 
         this.stand = false; 
@@ -206,6 +207,11 @@ class GameBoard {
         this.total = this.totalCalculator(this.cards); 
     }
 
+    clearCards() {
+        this.cards = new Array(); 
+        this.total = this.totalCalculator(this.cards);
+    }
+
     totalCalculator(currentCards) {
         let total = 0; 
         for (let card of currentCards) {
@@ -254,6 +260,10 @@ class GameBoard {
             gameEnd(firstPlayer, 'draw');
             return 'draw'; 
         }
+        if (firstPlayer.runningTotal > 20 && secondPlayer.runningTotal > 20) {
+            gameEnd(firstPlayer, 'draw');
+            return 'draw'; 
+        }
         console.log(`Standing State: ${firstPlayer.stand && secondPlayer.stand}.`)
         if (firstPlayer.stand && secondPlayer.stand) {
             let p1Dif = 20 - firstPlayer.runningTotal;
@@ -286,6 +296,7 @@ class GameBoard {
     }
 
     updateTotal(totalSpanId, player) {
+        console.log("updating total...");
         let totalTracker = document.getElementById(totalSpanId);
         let runningTotal = this.totalCalculator(this.cards); 
         totalTracker.innerText = runningTotal; 
@@ -328,16 +339,17 @@ function playCard (player, playerHandId, gameBoard, gameBoardId, totalSpanId) {
     }
     // var next = gameBoard.testWin(); 
     // if (next == 'continue') {
-    //     MAIN_DECK.renderCard(GAME_BOARD, "game-board", "board-total");
+    //     mainDeck.renderCard(GAME_BOARD, "game-board", "board-total");
     // }
 }
 
 function endTurn(player, gameBoard, gameBoardId, totalSpanId) {
     player.playedInTurn = false; // if the player has laid a card this turn, not able to lay again. This resets that restriction
     var next = gameBoard.roundEnd(playerOne, playerTwo); 
+    console.log("Ending turn...");
     if (next == 'continue') {
-        // MAIN_DECK.renderCard(gameBoard, gameBoardId, totalSpanId);
-        round(playerOne, playerTwo); 
+        // mainDeck.renderCard(gameBoard, gameBoardId, totalSpanId);
+        endBothTurns(playerOne, playerTwo); 
     }
 }
 
@@ -357,7 +369,7 @@ function stand(player, interactButtonClass, gameBoard) {
         document.getElementById("stand-2").removeEventListener("click", playerTwoStand);
     }
     // gameBoard.testWin(player); // TODO rework testWin function to account for both players
-    round(playerOne, playerTwo); 
+    endBothTurns(playerOne, playerTwo); 
 }
 
 function gameEnd(player, winState) {
@@ -374,12 +386,16 @@ function gameEnd(player, winState) {
     }
 }
 
-function round(firstPlayer, secondPlayer) {
+async function endBothTurns(firstPlayer, secondPlayer) {
     if (firstPlayer.turn) {
         firstPlayer.turn = false; 
         secondPlayer.turn = true; 
         if (!firstPlayer.stand) {
-            MAIN_DECK.renderCard(playerOneBoard, "game-board-1", "board-total-1", firstPlayer);
+            let lastPlayerBox = document.getElementById("player-two");
+            lastPlayerBox.classList.remove("current-turn");
+            let playerBox = document.getElementById("player-one"); 
+            playerBox.classList.add("current-turn");
+
             let playerButtons = document.getElementsByClassName("interact-button-1");
             for (button of playerButtons) {
                 button.classList.remove("temp-disabled-button");
@@ -404,6 +420,11 @@ function round(firstPlayer, secondPlayer) {
                 console.log("out-STANDING");
                 stand(firstPlayer, "interact-button-1", playerOneBoard);
             }
+
+            console.log("pre-wait");
+            await sleep(1000);
+            console.log("post-wait");
+            mainDeck.renderCard(playerOneBoard, "game-board-1", "board-total-1", firstPlayer);
         } 
         if (firstPlayer.stand) {
             endTurn(playerOne, playerOneBoard, "game-board-1", "board-total-1");
@@ -412,7 +433,11 @@ function round(firstPlayer, secondPlayer) {
         firstPlayer.turn = true; 
         secondPlayer.turn = false; 
         if (!secondPlayer.stand) {
-            MAIN_DECK.renderCard(playerTwoBoard, "game-board-2", "board-total-2", secondPlayer);
+            let lastPlayerBox = document.getElementById("player-one");
+            lastPlayerBox.classList.remove("current-turn");
+            let playerBox = document.getElementById("player-two"); 
+            playerBox.classList.add("current-turn");
+
             let playerButtons = document.getElementsByClassName("interact-button-2");
             for (button of playerButtons) {
                 button.classList.remove("temp-disabled-button");
@@ -436,6 +461,11 @@ function round(firstPlayer, secondPlayer) {
             if (secondPlayer.runningTotal == 20) {
                 stand(secondPlayer, "interact-button-2", playerTwoBoard); 
             }
+
+            console.log("pre-wait");
+            await sleep(1000);
+            console.log("post-wait");
+            mainDeck.renderCard(playerTwoBoard, "game-board-2", "board-total-2", secondPlayer);
         } 
         if (secondPlayer.stand) {
             endTurn(playerTwo, playerTwoBoard, "game-board-2", "board-total-2");
@@ -443,10 +473,15 @@ function round(firstPlayer, secondPlayer) {
     }
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 
 // ------> Game Content <----------
 
-const MAIN_DECK = new MainDeck(); 
+var mainDeck = new MainDeck(); 
+var roundCounter = 0; 
 
 // ---> Player One Content
 const playerOneBoard = new GameBoard(); 
@@ -457,17 +492,84 @@ const playerTwoBoard = new GameBoard();
 var playerTwo = new Player("Player Two", 2);
 
 // ---- > Game Manager Functions
-function gameManager() {
-    // MAIN_DECK.renderCard(playerOneBoard, "game-board-1", "board-total-1");
+function startNewRound() {
+    if (roundCounter > 3) {
+        console.log("End of game"); 
+        
+    } else {
+        console.log("starting game.")
+        // reset the house deck (recreate and shuffle)
+
+        // clear all cards currently counted on "game-board-1" and playerOneBoard
+        playerOne.runningTotal = 0;
+        playerOneBoard.clearCards();
+        let playerOneBoardElement = document.getElementById("game-board-1"); 
+        let oneChildren = playerOneBoardElement.children; 
+        for (let x = 0; x < oneChildren.length; x++) {
+            let child = oneChildren[x]; 
+            oneChildren.removeChild(child); 
+        }
+
+        // clear all cards currently counted on "game-board-2" and playerTwoBoard 
+        playerTwo.runningTotal = 0; 
+        playerTwoBoard.clearCards(); 
+        let playerTwoBoardElement = document.getElementById("game-board-2"); 
+        let twoChildren = playerTwoBoardElement.children; 
+        for (let x = 0; x < oneChildren.length; x++) {
+            let child = twoChildren[x]; 
+            twoChildren.removeChild(child); 
+        }
+
+        // for each win in player's hand, remove one fa-circle-notch and fill with fa-circle
+        let oneWins = document.getElementById("win-streak-1");
+        let twoWins = document.getElementById("win-streak-2"); 
+
+        // remove current win tracking 
+        let oneWinChildren = oneWins.children; 
+        let twoWinChildren = twoWins.children; 
+        for (let x = 0; x < oneWins.length; x++) {
+            let child = oneWinChildren[x]; 
+            oneWinChildren.removeChild(child); 
+        }
+        for (let x = 0; x < twoWins.length; x++) {
+            let child = twoWinChildren[x]; 
+            twoWinChildren.removeChild(child); 
+        }
+
+
+        console.log(`PLAYER 1 WINS ARE: ${playerOne.wins}`)
+        for (let i = 1; i <= 3; i++) {
+            var newWinElement = document.createElement('i');
+            if (playerOne.wins <= i) {
+                newWinElement.classList.add('fa-solid');
+                newWinElement.classList.add('fa-circle-notch');
+            } else {
+                newWinElement.classList.add('fa-solid');
+                newWinElement.classList.add('fa-circle');
+            }
+            oneWins.appendChild(newWinElement); 
+        }
+        console.log(`PLAYER 2 WINS ARE: ${playerTwo.wins}`)
+        for (let i = 1; i <= 3; i++) {
+            var newWinElement = document.createElement('i');
+            if (playerTwo.wins <= i) {
+                newWinElement.classList.add('fa-solid');
+                newWinElement.classList.add('fa-circle-notch');
+            } else {
+                newWinElement.classList.add('fa-solid');
+                newWinElement.classList.add('fa-circle');
+            }
+            twoWins.appendChild(newWinElement); 
+        }
+    }
     playerOne.renderHand("player-hand-1");
-    // MAIN_DECK.renderCard(playerTwoBoard, "game-board-2", "board-total-2");
     playerTwo.renderHand("player-hand-2");
 
     playerOne.turn = true; 
-    round(playerOne, playerTwo); 
+    endBothTurns(playerOne, playerTwo); 
 }
 
-gameManager();
+startNewRound();
 
 
 

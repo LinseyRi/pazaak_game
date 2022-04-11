@@ -9,6 +9,11 @@ body {
     to {box-shadow: 6px 4px 2px 1px #0ff;}
 }
 
+@keyframes turn {
+    from {box-shadow: none;}
+    to {box-shadow: -1px 1px 15px 5px #0ff;}
+}
+
 body {
     background-color: black;
     color: white; 
@@ -101,4 +106,10 @@ body {
 .temp-disabled-button {
     background-color: rgb(110, 103, 103);
     cursor: not-allowed;
+}
+
+.player-board.current-turn {
+    animation-name: turn; 
+    animation-fill-mode: forwards;
+    animation-duration: 4s;
 }
