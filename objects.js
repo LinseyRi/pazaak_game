@@ -79,10 +79,8 @@ class MainDeck {
         // gameBoard - gameBoard object
         // boardElementId - String referring to HTML div 
         // totalSpanId - String referring to HTML span 
-        // console.log("Laying card...");
         let card = this.drawCard(); 
         gameBoard.cardLaid(card, boardElementId, totalSpanId, true, player);
-        // console.log("Laid card..."); 
     }
 }
 
@@ -195,10 +193,7 @@ class Player {
                     for (let x = 0; x < children.length; x++) {
                         let child = children[x]; 
                         if (child.classList.contains('selected-card')) {
-                            // console.log("Removing selected..."); 
                             child.classList.remove('selected-card'); 
-                            // console.log(child); 
-                            // console.log(`Child value: ${child.value}`); 
                         }    
                     }
                     for (let i = 0; i < self.hand.length; i++) {
@@ -207,13 +202,10 @@ class Player {
                             c.selected = false; 
                         }
                     }
-                    // console.log("cleared state:");
-                    // console.log(self.hand);
                     // then find the value of the selected card
                     // and update the card object to be selected as well as the HTML element 
                     var v = e.target.value;
                     e.target.classList.add('selected-card'); 
-                    // console.log(e.target);
                     for (let i = 0; i < self.hand.length; i++) {
                         let c = self.hand[i]; 
                         if (c.value === v) {
@@ -221,8 +213,6 @@ class Player {
                             break; 
                         }
                     }
-                    // console.log("Selected state: ");
-                    // console.log(self.hand); 
                 }
             }
             document.getElementById(handElementId).appendChild(newCardElement); 
@@ -233,14 +223,26 @@ class Player {
 }
 
 class GameBoard {
-    constructor() {
+    constructor(player, boardHTMLId) {
         this.cards = new Array(); 
         this.total = this.totalCalculator(this.cards); 
+        this.player = player; 
+        this.boardHTMLId = boardHTMLId;
+
     }
 
-    clearCards() {
+    clearBoard() {
         this.cards = new Array(); 
-        this.total = this.totalCalculator(this.cards);
+        this.total = 0; 
+        let myNode = document.getElementById(this.boardHTMLId); 
+        while (myNode.firstChild) {
+            myNode.removeChild(myNode.lastChild);
+        }
+        if (this.player.role == 1) {
+            this.updateTotal("board-total-1", this.player); 
+        } else if (this.player.role == 2) {
+            this.updateTotal("board-total-2", this.player);
+        }
     }
 
     totalCalculator(currentCards) {
@@ -271,21 +273,6 @@ class GameBoard {
         this.updateTotal(totalSpanId, player);
     }
 
-    testWin(player) {
-        if ( this.total == 20 ) {
-            // gameEnd(player, 'win'); 
-            console.log('WIN');
-            return 'win';
-        } else if ( this.total > 20 ) {
-            console.log('LOSE');
-            // gameEnd(player, 'lose'); 
-            return 'lose';
-        } else {
-            console.log('continue');
-            return 'continue';
-        }
-    }
-
     roundEnd(firstPlayer, secondPlayer) {
         if (firstPlayer.runningTotal == 20 && secondPlayer.runningTotal == 20) {
             endCompleteRound(firstPlayer, 'draw');
@@ -295,7 +282,6 @@ class GameBoard {
             endCompleteRound(firstPlayer, 'draw');
             return 'draw'; 
         }
-        console.log(`Standing State: ${firstPlayer.stand && secondPlayer.stand}.`)
         if (firstPlayer.stand && secondPlayer.stand) {
             let p1Dif = 20 - firstPlayer.runningTotal;
             let p2Dif = 20 - secondPlayer.runningTotal; 
@@ -327,13 +313,11 @@ class GameBoard {
     }
 
     updateTotal(totalSpanId, player) {
-        console.log("updating total...");
         let totalTracker = document.getElementById(totalSpanId);
         let runningTotal = this.totalCalculator(this.cards); 
         totalTracker.innerText = runningTotal; 
         this.total = this.totalCalculator(this.cards);
         player.runningTotal = runningTotal; 
-        console.log(`${player.name}'s total is ${player.runningTotal}`)
     }
 }
 
@@ -361,25 +345,18 @@ function playCard (player, playerHandId, gameBoard, gameBoardId, totalSpanId) {
     } 
     player.playedInTurn = true; 
     if (gameBoard.total == 20) {
-        console.log("out-STANDING");
         if (player.role == 1) {
             stand(player, "interact-button-1", playerOneBoard);
         } else if (player.role == 2) {
             stand(player, "interact-button-2", playerTwoBoard); 
         }
     }
-    // var next = gameBoard.testWin(); 
-    // if (next == 'continue') {
-    //     mainDeck.renderCard(GAME_BOARD, "game-board", "board-total");
-    // }
 }
 
 function endTurn(player, gameBoard, gameBoardId, totalSpanId) {
     player.playedInTurn = false; // if the player has laid a card this turn, not able to lay again. This resets that restriction
     var next = gameBoard.roundEnd(playerOne, playerTwo); // TODO this might need putting back in 
-    console.log("Ending turn...");
     if (next == 'continue') {
-        // mainDeck.renderCard(gameBoard, gameBoardId, totalSpanId);
         endBothTurns(playerOne, playerTwo); 
     }
 }
@@ -399,7 +376,6 @@ function stand(player, interactButtonClass, gameBoard) {
         document.getElementById("end-turn-2").removeEventListener("click", endPlayerTwoTurn);
         document.getElementById("stand-2").removeEventListener("click", playerTwoStand);
     }
-    // gameBoard.testWin(player); // TODO rework testWin function to account for both players
     endBothTurns(playerOne, playerTwo); 
 }
 
@@ -457,13 +433,10 @@ async function endBothTurns(firstPlayer, secondPlayer) {
             document.getElementById("stand-2").removeEventListener("click", playerTwoStand);
             
             if (firstPlayer.runningTotal == 20) {
-                console.log("out-STANDING");
                 stand(firstPlayer, "interact-button-1", playerOneBoard);
             }
 
-            // console.log("pre-wait");
             await sleep(1000);
-            // console.log("post-wait");
             mainDeck.renderCard(playerOneBoard, "game-board-1", "board-total-1", firstPlayer);
         } 
         if (firstPlayer.stand) {
@@ -502,9 +475,7 @@ async function endBothTurns(firstPlayer, secondPlayer) {
                 stand(secondPlayer, "interact-button-2", playerTwoBoard); 
             }
 
-            // console.log("pre-wait");
             await sleep(1000);
-            // console.log("post-wait");
             mainDeck.renderCard(playerTwoBoard, "game-board-2", "board-total-2", secondPlayer);
         } 
         if (secondPlayer.stand) {
@@ -513,14 +484,6 @@ async function endBothTurns(firstPlayer, secondPlayer) {
     }
 }
 
-function clearBoard(boardElementId) {
-    let board = document.getElementById(boardElementId); 
-    let children = board.children; 
-    for (let x = 0; x < children.length; x++) {
-        let child = children[x]; 
-        board.removeChild(child); 
-    }
-}
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -533,15 +496,16 @@ var mainDeck = new MainDeck();
 var roundCounter = 0; 
 
 // ---> Player One Content
-const playerOneBoard = new GameBoard(); 
 var playerOne = new Player("Player One", 1); 
+const playerOneBoard = new GameBoard(playerOne, "game-board-1"); 
 
 // ---> Player Two Content 
-const playerTwoBoard = new GameBoard(); 
 var playerTwo = new Player("Player Two", 2);
+const playerTwoBoard = new GameBoard(playerTwo, "game-board-2"); 
+
 
 // ---- > Game Manager Functions
-function startNewRound() {
+async function startNewRound() {
     if (playerOne.wins == 3 && playerTwo.wins < 3) {
         gameEnd(playerOne, 'win');
         return 'end'; 
@@ -549,20 +513,17 @@ function startNewRound() {
         gameEnd(playerTwo, 'win');
         return 'end'; 
     }
-    // console.log("starting game.")
     // reset the house deck (recreate and shuffle)
     mainDeck = new MainDeck(); 
 
     // clear all cards currently counted on "game-board-1" and playerOneBoard
     playerOne.resetBoard(); 
-    playerOneBoard.clearCards();
-    clearBoard("game-board-1"); 
+    playerOneBoard.clearBoard();
 
     // clear all cards currently counted on "game-board-2" and playerTwoBoard 
     playerTwo.resetBoard(); 
-    playerTwoBoard.clearCards(); 
-    clearBoard("game-board-2");
-    
+    playerTwoBoard.clearBoard(); 
+    await sleep(2000);
 
     // for each win in player's hand, remove one fa-circle-notch and fill with fa-circle
     playerOne.removeWinNodes("win-streak-1"); 
