@@ -381,8 +381,8 @@ function stand(player, interactButtonClass, gameBoard) {
 }
 
 function gameEnd(player, winState) { // TODO change to apply only after 3 wins 
-    var board = document.getElementById("game-container");
-    var endBanner = document.getElementById("game-end-banner");
+    let board = document.getElementById("game-container");
+    let endBanner = document.getElementById("game-end-banner");
     endBanner.classList.add('active');
     endBanner.classList.remove('disabled');
     if (winState == 'win') {
@@ -394,11 +394,33 @@ function gameEnd(player, winState) { // TODO change to apply only after 3 wins
     }
 }
 
-function endCompleteRound(player, winState) {
+async function showBanner(winState, player) {
+    // write code to create temporary win or lose state banner; 
+    let board = document.getElementById("game-container");
+    let endBanner = document.getElementById("round-end-banner");
+    endBanner.classList.add('active');
+    endBanner.classList.remove('disabled');
+    if (winState == 'win') {
+        endBanner.innerHTML = `${player.name} wins the round.`;
+    } else if (winState == 'lose') {
+        endBanner.innerHTML = `${player.name} LOSES`; 
+    } else if (winState == 'draw') {
+        endBanner.innerHTML = `This round's a DRAW`
+    }
+    await sleep(3000);
+    endBanner.classList.remove('active');
+    endBanner.classList.add('disabled');
+}
+
+async function endCompleteRound(player, winState) {
     if (winState == 'draw') {
+        showBanner('draw', null);
         startNewRound(); 
     } else if (winState == 'win') {
         player.wins = player.wins + 1
+        if (player.wins != 3) {
+            showBanner('win', player);
+        }
         startNewRound(); 
     }
 }
