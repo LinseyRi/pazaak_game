@@ -340,6 +340,7 @@ function playCard (player, playerHandId, gameBoard, gameBoardId, totalSpanId) {
     // if a card has been selected,
     if (card) {
         let newBoardCard = new Card(parseInt(card.value)); 
+        cardSound.play();
         gameBoard.cardLaid(newBoardCard, gameBoardId, totalSpanId, false, player);
         player.layCard(card, playerHandId); 
     } 
@@ -436,6 +437,7 @@ async function endBothTurns(firstPlayer, secondPlayer) {
                 stand(firstPlayer, "interact-button-1", playerOneBoard);
             }
 
+            cardSound.play();
             await sleep(1000);
             mainDeck.renderCard(playerOneBoard, "game-board-1", "board-total-1", firstPlayer);
         } 
@@ -475,6 +477,7 @@ async function endBothTurns(firstPlayer, secondPlayer) {
                 stand(secondPlayer, "interact-button-2", playerTwoBoard); 
             }
 
+            cardSound.play();
             await sleep(1000);
             mainDeck.renderCard(playerTwoBoard, "game-board-2", "board-total-2", secondPlayer);
         } 
@@ -488,6 +491,9 @@ async function endBothTurns(firstPlayer, secondPlayer) {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+var cardSound = new Audio("playCardSound.mp3"); // buffers automatically when created
+
 
 
 // ------> Game Content <----------
@@ -587,4 +593,10 @@ function endPlayerTwoTurn() {
 
 function playerTwoStand() {
     stand(playerTwo, "interact-button-2", playerTwoBoard); 
+}
+
+let testingSoundButton = document.getElementById("test-sound");
+testingSoundButton.onclick = function (e) {
+    console.log("SOUND!"); 
+    cardSound.play();
 }
