@@ -357,7 +357,7 @@ function playCard (player, playerHandId, gameBoard, gameBoardId, totalSpanId) {
 
 function endTurn(player, gameBoard, gameBoardId, totalSpanId) {
     player.playedInTurn = false; // if the player has laid a card this turn, not able to lay again. This resets that restriction
-    var next = gameBoard.roundEnd(playerOne, playerTwo); // TODO this might need putting back in 
+    var next = gameBoard.roundEnd(playerOne, playerTwo); 
     if (next == 'continue') {
         endBothTurns(playerOne, playerTwo); 
     }
@@ -381,7 +381,7 @@ function stand(player, interactButtonClass, gameBoard) {
     endBothTurns(playerOne, playerTwo); 
 }
 
-function gameEnd(player, winState) { // TODO change to apply only after 3 wins 
+function gameEnd(player, winState) { 
     let board = document.getElementById("game-container");
     let endBanner = document.getElementById("game-end-banner");
     endBanner.classList.add('active');
@@ -629,14 +629,7 @@ function createChanceCard(card, htmlElement) {
     chanceDisplay.appendChild(newChanceEl); 
 }
 
-
-
-// TODO add a player 2
-// TODO implement round-robin turn style 
 // TODO implement AI functionality  
-// TODO flip for who starts round
-// TODO implement 3 rounds
-
 
 // ------> Event Listener Functions <----------
 
@@ -665,12 +658,6 @@ function endPlayerTwoTurn() {
 
 function playerTwoStand() {
     stand(playerTwo, "interact-button-2", playerTwoBoard); 
-}
-
-let testingSoundButton = document.getElementById("test-sound");
-testingSoundButton.onclick = function (e) {
-    console.log("SOUND!"); 
-    cardSound.play();
 }
 
 fillStartScreen(); 
