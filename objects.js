@@ -609,6 +609,8 @@ async function fillStartScreen() {
     // test who goes first 
     let firstGo = playerOneCard.value > playerTwoCard.value ? playerOne : playerTwo; 
 
+    // enter this into span
+    document.getElementById("first-player").innerHTML = `${firstGo.name}`; 
     // add start game button function 
     document.getElementById("start-game-button").addEventListener("click", function() {
         document.getElementById("game-start").classList.add("disabled"); 
