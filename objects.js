@@ -104,6 +104,7 @@ class Player {
         this.turn = false; 
         this.runningTotal = 0; 
         this.wins = 0; 
+        this.lastToWin = false; 
         this.playerDeck = new PlayerDeck(); 
         this.hand = new Array(); 
         this.stand = false; 
@@ -415,13 +416,13 @@ async function showBanner(winState, player) {
 async function endCompleteRound(player, winState) {
     if (winState == 'draw') {
         showBanner('draw', null);
-        startNewRound(); 
+        startNewRound(player); 
     } else if (winState == 'win') {
         player.wins = player.wins + 1
         if (player.wins != 3) {
             showBanner('win', player);
         }
-        startNewRound(); 
+        startNewRound(player); 
     }
 }
 
@@ -533,7 +534,7 @@ const playerTwoBoard = new GameBoard(playerTwo, "game-board-2");
 
 
 // ---- > Game Manager Functions
-async function startNewRound() {
+async function startNewRound(first) {
     if (playerOne.wins == 3 && playerTwo.wins < 3) {
         gameEnd(playerOne, 'win');
         return 'end'; 
@@ -572,12 +573,59 @@ async function startNewRound() {
         playerTwo.renderHand("player-hand-2");
     }
 
-    playerOne.turn = true; 
+    playerOne.turn = false; 
     playerTwo.turn = false; 
+    first.turn = true; 
+
+    // if (playerOne.lastToWin == false && playerTwo.lastToWin == false) {
+    //     // insert pull card from deck chance - run in separate function 
+    // } else if (playerOne.lastToWin) {
+    //     playerOne.turn = true; 
+    // } else if (playerTwo.lastToWin) {
+    //     playerTwo.turn = true; 
+    // }
+
+    
     endBothTurns(playerOne, playerTwo); 
 }
 
-startNewRound();
+function chanceCheckDraw() {
+    let chanceDeck = new MainDeck(); 
+    return chanceDeck.drawCard(); 
+}
+
+async function fillStartScreen() {
+    // draw the cards
+    let playerOneCard = chanceCheckDraw(); 
+    let playerTwoCard = chanceCheckDraw(); 
+    while (playerOneCard == playerTwoCard) { // ensure cards aren't the same
+        playerTwoCard = chanceCheckDraw(); 
+    }
+
+    // insert function to create card img
+    createChanceCard(playerOneCard, "player-1-chance"); 
+    createChanceCard(playerTwoCard, "player-2-chance"); 
+
+    // test who goes first 
+    let firstGo = playerOneCard.value > playerTwoCard.value ? playerOne : playerTwo; 
+
+    // add start game button function 
+    document.getElementById("start-game-button").addEventListener("click", function() {
+        document.getElementById("game-start").classList.add("disabled"); 
+        startNewRound(firstGo); 
+    }); 
+}
+
+function createChanceCard(card, htmlElement) {
+    console.log("Creating card..."); 
+    let chanceDisplay = document.getElementById(htmlElement); 
+    let newChanceEl = document.createElement('img');
+    let imageSrc = houseCardImages[card.value.toString()]; 
+    newChanceEl.src = imageSrc; 
+    newChanceEl.classList.add("chance-display-card"); 
+    newChanceEl.value = card.value; 
+    chanceDisplay.appendChild(newChanceEl); 
+}
 
 
 
@@ -622,3 +670,5 @@ testingSoundButton.onclick = function (e) {
     console.log("SOUND!"); 
     cardSound.play();
 }
+
+fillStartScreen(); 
