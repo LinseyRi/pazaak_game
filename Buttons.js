@@ -42,6 +42,7 @@ class EndTurnButton extends Button {
     
     endTurn() { 
         this.player.playedInTurn = false; 
+        console.log("Player standing: ", this.player.stand); 
         this.gameBoard.checkIfPlayerStand(); 
         this.gameBoard.houseToLay(); 
     }
@@ -50,7 +51,19 @@ class EndTurnButton extends Button {
         document.getElementById(this.HTMLid).addEventListener("click", this.boundEndTurn); 
     }
 
-    // TODO: add remove event listener function, then implement the chain of activity: 
-        // - bind an instance of the endturn button to a html element
-        // test if clicking end turn will rest the played in turn and cause a house card to be laid 
+    removeEndEventListener() {
+        document.getElementById(this.HTMLid).removeEventListener("click", this.boundEndTurn); 
+    }
+
+}
+
+class StandButton extends Button {
+    constructor(player, handBoard, gameBoard, buttonHTMLid) {
+        super(player, handBoard, gameBoard, buttonHTMLid)
+        this.boundStand = this.stand.bind(this); 
+    }
+
+    stand() {
+
+    }
 }

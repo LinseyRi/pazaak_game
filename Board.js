@@ -131,5 +131,3 @@ class HouseBoard extends GameBoard {
         this.layCardOnBoard(this.houseDeck.drawCard(), true); 
     }
 }
-
-// TODO combine the render cards functions from each of the two classes 
