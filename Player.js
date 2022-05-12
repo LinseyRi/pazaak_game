@@ -7,9 +7,10 @@
         this.createHand(); 
 
         this.isTurn = false; 
+        this.playedInTurn = false; 
+        this.stand = false; 
         this.wins = 0; 
         this.lastToWin = false; 
-        this.playedInRound = false; 
     } 
 
     createHand() {

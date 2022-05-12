@@ -20,7 +20,9 @@ class PlayCardButton extends Button {
         if (selectedCard) {
             this.handBoard.removeCardInHand(selectedCard); 
             this.gameBoard.layCardOnBoard(selectedCard, false); 
+            this.player.playedInTurn = true; 
         }
+        this.gameBoard.checkIfPlayerStand(); 
     }
 
     addPlayEventListener() { 
@@ -32,6 +34,23 @@ class PlayCardButton extends Button {
     }
 }
 
-// create play card HTML button 
-// Integrate with an instance of the Button object 
-// test to see if the adding and removing of event listeners works 
+class EndTurnButton extends Button {
+    constructor(player, handBoard, gameBoard, buttonHTMLid) {
+        super(player, handBoard, gameBoard, buttonHTMLid)
+        this.boundEndTurn = this.endTurn.bind(this); 
+    }
+    
+    endTurn() { 
+        this.player.playedInTurn = false; 
+        this.gameBoard.checkIfPlayerStand(); 
+        this.gameBoard.houseToLay(); 
+    }
+
+    addEndEventListener() {
+        document.getElementById(this.HTMLid).addEventListener("click", this.boundEndTurn); 
+    }
+
+    // TODO: add remove event listener function, then implement the chain of activity: 
+        // - bind an instance of the endturn button to a html element
+        // test if clicking end turn will rest the played in turn and cause a house card to be laid 
+}

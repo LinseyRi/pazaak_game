@@ -1,7 +1,7 @@
 let gameDeck = new HouseDeck(); 
 let playerOne = new Player("Player One", 1);
 let playerOneHand = new HandBoard(playerOne, "player-hand-1"); 
-let gameBoard = new  HouseBoard(playerOne, "game-board-1", "board-total-1");
+let gameBoard = new  HouseBoard(playerOne, gameDeck, "game-board-1", "board-total-1");
 let playCardButton = new PlayCardButton(playerOne, playerOneHand, gameBoard, "play-card-1"); 
 
 // ------- TEST 1: House Deck Created and Shuffled 

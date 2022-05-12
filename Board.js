@@ -21,6 +21,10 @@ class GameBoard {
         }
         document.getElementById(this.HTMLid).appendChild(newCardHTMLElement); 
     }
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms)); 
+    }
 }
 
 class HandBoard extends GameBoard {
@@ -36,7 +40,7 @@ class HandBoard extends GameBoard {
         }
     } 
 
-    removeCardInHand(card) {
+    removeCardInHand(card) { // FUNCTIONAL
         this.player.removeCardFromHand(card); 
         console.log(this.player.hand);
 
@@ -79,35 +83,53 @@ class HandBoard extends GameBoard {
 }
 
 class HouseBoard extends GameBoard {
-    constructor(player, boardHTMLid, totalHTMLid) {
+    constructor(player, houseDeck, boardHTMLid, totalHTMLid) {
         super(player, boardHTMLid); 
         this.totalContainerid = totalHTMLid; 
+        this.houseDeck = houseDeck; 
         this.laidCards = new Array(); 
-        console.log("Game Board Cards Are: ", this.laidCards); 
         this.total = this.calculateTotal(this.laidCards); 
     }
 
-    calculateTotal(currentCards) {
+    calculateTotal(currentCards) { // FUNCTIONAL 
         let total = 0; 
-        console.log("Current House Cards are: ", currentCards);
         for (let card of currentCards) {
             total = total + card.value; 
         }
         return total; 
     }
 
-    updateTotal() {
+    updateTotal() {// FUNCTIONAL 
         let totalTracker = document.getElementById(this.totalContainerid); 
         this.total = this.calculateTotal(this.laidCards); 
         totalTracker.innerText = this.total; 
     }
 
-    layCardOnBoard(card, isHouse) {
+    layCardOnBoard(card, isHouse) { // FUNCTIONAL
         this.laidCards.push(card);
         this.renderCard(card, isHouse); 
         this.updateTotal(); 
+        this.checkIfPlayerStand(); 
     }
 
+    clearBoard() { // TODO test works
+        this.laidCards = new Array(); 
+        this.updateTotal(); 
+        let currentBoard = document.getElementById(this.HTMLid);
+        while (currentBoard.firstChild) {
+            currentBoard.removeChild(currentBoard.lastChild); 
+        }
+    }
+
+    checkIfPlayerStand() { 
+        if (this.total == 20) {
+            this.player.stand = true; 
+        }
+    }
+
+    houseToLay() {
+        this.layCardOnBoard(this.houseDeck.drawCard(), true); 
+    }
 }
 
 // TODO combine the render cards functions from each of the two classes 
