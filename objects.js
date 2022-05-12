@@ -84,17 +84,17 @@ class MainDeck {
     }
 }
 
-class PlayerDeck extends MainDeck {
+// class PlayerDeck extends MainDeck {
 
-    buildDeck() {
-        let cardOptions = [-1, -2, -3, -4, 1, 2, 3, 4];
-        for (let i = 1; i <= 10; i++) {
-            let r = Math.floor(Math.random() * 7) + 1;
-            let newCard = new Card(cardOptions[r]);
-            this.deck.push(newCard); 
-        }
-    }
-}
+//     buildDeck() {
+//         let cardOptions = [-1, -2, -3, -4, 1, 2, 3, 4];
+//         for (let i = 1; i <= 10; i++) {
+//             let r = Math.floor(Math.random() * 7) + 1;
+//             let newCard = new Card(cardOptions[r]);
+//             this.deck.push(newCard); 
+//         }
+//     }
+// }
 
 class Player {
     constructor(playerName, role) {
@@ -102,7 +102,7 @@ class Player {
         this.role = role; 
         this.turnDrawnCard; 
         this.turn = false; 
-        this.runningTotal = 0; 
+        this.runningTotal = 0; /// to add to game board
         this.wins = 0; 
         this.lastToWin = false; 
         this.playerDeck = new PlayerDeck(); 
@@ -124,7 +124,7 @@ class Player {
         }
     }
 
-    resetBoard() { 
+    resetBoard() { // this should be in the board class 
         this.runningTotal = 0; 
         this.stand = false; 
     }
