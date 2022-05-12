@@ -3,6 +3,24 @@ class GameBoard {
         this.player = player; 
         this.HTMLid = boardHTMLid; 
     }
+
+    renderCard(card, isHouse) {
+        let newCardHTMLElement = document.createElement('img'); 
+        newCardHTMLElement.src = card.findImage(isHouse); 
+        newCardHTMLElement.classList.add('board-card'); 
+        newCardHTMLElement.value = card.value; 
+        if (!isHouse) {
+            let self = this; 
+            newCardHTMLElement.onclick = function (e) {
+                if (!self.player.playedInRound) {
+                    let parent = e.target.parentNode; 
+                    self.removeSelectedState(parent); 
+                    self.selectCard(e.target); 
+                }
+            }
+        }
+        document.getElementById(this.HTMLid).appendChild(newCardHTMLElement); 
+    }
 }
 
 class HandBoard extends GameBoard {
@@ -11,39 +29,24 @@ class HandBoard extends GameBoard {
         this.cards = player.hand; // TODO test weather this is permanent assignment, or reacts when a change occurs to the player's hand
     }
 
-    renderCard(card, image) { // FUNCTIONAL
-        let newCardHTMLElement = document.createElement('img'); 
-        newCardHTMLElement.src = image; 
-        newCardHTMLElement.classList.add('board-card'); 
-        newCardHTMLElement.value = card.value; 
-        let self = this; 
-        newCardHTMLElement.onclick = function (e) {
-            if (!self.player.playedInRound) {
-                let parent = e.target.parentNode; 
-                self.removeSelectedState(parent); 
-                self.selectCard(e.target); 
-            }
-        }
-        document.getElementById(this.HTMLid).appendChild(newCardHTMLElement); 
-    }
-
     showHandOnPage() { // FUNCTIONAL 
         for (let i = 0; i < this.cards.length; i ++) {
             let card = this.cards[i]; 
-            let cardImage = playerCardImages[card.value.toString()]; 
-            this.renderCard(card,cardImage); 
+            this.renderCard(card, false); 
         }
     } 
 
     removeCardInHand(card) {
         this.player.removeCardFromHand(card); 
+        console.log(this.player.hand);
 
-        let board = document.getElementById(this.boardHTMLid); 
+        let board = document.getElementById(this.HTMLid); 
+        console.log("Board is: ", board); 
         let allChildren = board.children; 
-        for (let x = 0; x < children.length; x++) {
+        for (let x = 0; x < allChildren.length; x++) {
             let currentChild = allChildren[x]; 
             if (currentChild.classList.contains('selected-card')) {
-                board.removeChild(); 
+                board.removeChild(currentChild); 
                 break; 
             }
         }
@@ -99,18 +102,9 @@ class HouseBoard extends GameBoard {
         totalTracker.innerText = this.total; 
     }
 
-    renderCard(card, image) {
-        let newCardHTMLElement = document.createElement('img'); 
-        newCardHTMLElement.src = image; 
-        newCardHTMLElement.classList.add('board-card'); 
-        newCardHTMLElement.value = card.value; 
-        document.getElementById(this.HTMLid).appendChild(newCardHTMLElement); 
-    }
-
-    layCardOnBoard(card) {
+    layCardOnBoard(card, isHouse) {
         this.laidCards.push(card);
-        let cardImage = houseCardImages[card.value.toString()]; 
-        this.renderCard(card, cardImage); 
+        this.renderCard(card, isHouse); 
         this.updateTotal(); 
     }
 

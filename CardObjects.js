@@ -28,6 +28,10 @@ houseCardImages = {
         this.value = value; 
         this.selected = false; 
     }
+
+    findImage(isHouseCard) {
+        return ( isHouseCard ? houseCardImages[this.value.toString()] : playerCardImages[this.value.toString()]);
+    }
 }
 
  class DeckOfCards {

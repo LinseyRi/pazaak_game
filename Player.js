@@ -27,4 +27,13 @@
             }
         }
     } 
+
+    getSelected() { 
+        for (let i = 0; i < this.hand.length; i ++) {
+            let currentCard = this.hand[i]; 
+            if (currentCard.selected) {
+                return currentCard; 
+            }
+        }
+    }
 }
