@@ -1,0 +1,20 @@
+{
+  "name": "pazaak_game",
+  "version": "1.0.0",
+  "description": "Package containing classes for game of Pazaak",
+  "main": "TestFile.js",
+  "scripts": {
+    "test": "node TestFile.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LinseyRi/pazaak_game.git"
+  },
+  "type": "module", 
+  "author": "Linsey",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LinseyRi/pazaak_game/issues"
+  },
+  "homepage": "https://github.com/LinseyRi/pazaak_game#readme"
+}

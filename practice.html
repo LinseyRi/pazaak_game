@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Practice Pazaak Remake</title>
+</head>
+<body>
+    <div class="header">
+        <h1>Pazaak</h1>
+        <p>Current Player: <span id="current-player"></span></p>
+    </div>
+    <div id="game-container">
+        <!-- Player 1 Board -->
+        <div id="player-one" class="player-board">
+            <h2>Player 1 board total is: <span id="board-total-1"></span></h2>
+            <div id="game-board-1" class="board-box">
+
+            </div>
+            <div id="player-hand-1" class="board-box">
+
+            </div>
+        </div>
+    </div>
+    <script src="CardObjects.js"></script>
+    <script src="Player.js"></script>
+    <script src="Board.js"></script>
+    <script src="TestFile.js"></script>
+</body>
+</html>

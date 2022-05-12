@@ -1,4 +1,4 @@
-class Player {
+ class Player {
     constructor(playerName, playerNumber) {
         this.name = playerName; 
         this.number = playerNumber; 
@@ -14,7 +14,7 @@ class Player {
 
     createHand() {
         for (let i = 1; i <= 4; i++) {
-            this.hand.push(this.deck.pop()); 
+            this.hand.push(this.deck.cards.pop()); 
         }
     }
 
