@@ -1,56 +1,68 @@
 class GameManager {
     constructor() {
-        this.playerOne = new Player("Player One", 1);
-        this.playerTwo = new Player("Player Two", 2);  
-        this.houseDeck = new HouseDeck(); 
-        this.playerOneBoard = new PlayerBoardManager(this.playerOne, 
-                                                this.houseDeck, 
-                                                "game-board-1", 
-                                                "board-total-1", 
-                                                "player-hand-1", 
-                                                "play-card-1", 
-                                                "end-turn-1"
-                                                ); 
-        this.playerTwoBoard = new PlayerBoardManager(this.playerTwo, 
-                                                this.houseDeck,
-                                                "game-board-2",
-                                                "board-total-2", 
-                                                "player-hand-2", 
-                                                "play-card-2",
-                                                "end-turn-2"
-                                                ); 
+        this.houseDeck = new HouseDeck();  
+        this.playerOne = new Player("Player One", 
+                                1, 
+                                this.houseDeck, 
+                                "game-board-1", 
+                                "board-total-1", 
+                                "player-hand-1", 
+                                "play-card-1", 
+                                "end-turn-1"
+
+                                );
+        this.playerTwo = new Player("Player Two", 
+                                2,
+                                this.houseDeck,
+                                "game-board-2",
+                                "board-total-2", 
+                                "player-hand-2", 
+                                "play-card-2",
+                                "end-turn-2"
+                                );                                                                                           
     }
 
-    startGame(firstPlayerBoard) {
-        this.populatePlayerOne(); 
-        this.populatePlayerTwo(); 
-        firstPlayerBoard.addAllEventListeners(); 
-        this.drawFirstCard(firstPlayerBoard); 
+    startGame(firstPlayer) {
+        this.populatePlayer(this.playerOne); 
+        this.populatePlayer(this.playerTwo); 
+        firstPlayer.board.addAllEventListeners(); 
+        this.drawFirstCard(firstPlayer); 
     }
 
-    populatePlayerOne() {
-        this.playerOneBoard.handBoard.showHandOnPage(); 
-        this.playerOneBoard.gameBoard.updateTotal(); 
+    populatePlayer(player) {
+        player.board.handBoard.showHandOnPage(); 
+        player.board.gameBoard.updateTotal(); 
     }
 
-    populatePlayerTwo() {
-        this.playerTwoBoard.handBoard.showHandOnPage(); 
-        this.playerTwoBoard.gameBoard.updateTotal(); 
-    }
-
-    drawFirstCard(houseBoardToLay) {
+    drawFirstCard(player) {
         let card = this.houseDeck.drawCard(); 
-        houseBoardToLay.gameBoard.layCardOnBoard(card, true); 
+        player.board.gameBoard.layCardOnBoard(card, true); 
     } 
 
     testEndGame() {
         if (this.playerOne.stand && this.playerTwo.stand) {
             this.endGame(); 
+            return true; 
+        } else {
+            return false; 
         }
     }
 
     roundEnd() {
+        if(!this.testEndGame()) {
 
+        }
+
+    }
+
+    startTurn(player) {
+        player.turn = true;
+        player.board.addAllEventListeners(); 
+    }
+
+    endTurn(player) {
+        player.turn = false; 
+        player.board.removeAllEventListeners(); 
     }
 
     gameEnd() {

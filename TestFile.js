@@ -1,5 +1,6 @@
 let newGame = new GameManager(); 
-newGame.startGame(newGame.playerOneBoard); 
+console.log(newGame.playerOne); 
+newGame.startGame(newGame.playerOne); 
 
 // let gameDeck = new HouseDeck(); 
 // let playerOne = new Player("Player One", 1);

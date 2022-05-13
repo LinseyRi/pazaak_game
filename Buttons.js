@@ -64,6 +64,6 @@ class StandButton extends Button {
     }
 
     stand() {
-
+        // TODO 
     }
 }

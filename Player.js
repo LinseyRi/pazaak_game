@@ -1,5 +1,13 @@
  class Player {
-    constructor(playerName, playerNumber) {
+    constructor(playerName, 
+                playerNumber, 
+                houseDeck, 
+                gameBoardHTML, 
+                boardTotalHTML, 
+                handHTMLid, 
+                playid, 
+                endid) 
+                {
         this.name = playerName; 
         this.number = playerNumber; 
         this.deck = new PlayerDeck(); 
@@ -11,7 +19,21 @@
         this.stand = false; 
         this.wins = 0; 
         this.lastToWin = false; 
+        console.log("House deck is: ", houseDeck); 
+        this.board = new PlayerBoardManager(this, 
+                                        houseDeck, 
+                                        gameBoardHTML, 
+                                        boardTotalHTML, 
+                                        handHTMLid, 
+                                        playid, 
+                                        endid 
+                                        ); 
     } 
+
+    stand() {
+        this.stand = true; 
+
+    }
 
     createHand() {
         for (let i = 1; i <= 4; i++) {
