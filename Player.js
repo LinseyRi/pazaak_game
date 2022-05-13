@@ -1,10 +1,12 @@
  class Player {
     constructor(playerName, 
                 playerNumber, 
+                boardHTMLid,
                 houseDeck, 
                 gameBoardHTML, 
                 boardTotalHTML, 
                 handHTMLid, 
+                buttonClassid, 
                 playid, 
                 endid) 
                 {
@@ -20,11 +22,13 @@
         this.wins = 0; 
         this.lastToWin = false; 
         console.log("House deck is: ", houseDeck); 
-        this.board = new PlayerBoardManager(this, 
+        this.board = new PlayerBoardManager(this,
+                                        boardHTMLid,  
                                         houseDeck, 
                                         gameBoardHTML, 
                                         boardTotalHTML, 
-                                        handHTMLid, 
+                                        handHTMLid,
+                                        buttonClassid, 
                                         playid, 
                                         endid 
                                         ); 

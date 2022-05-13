@@ -3,20 +3,23 @@ class GameManager {
         this.houseDeck = new HouseDeck();  
         this.playerOne = new Player("Player One", 
                                 1, 
+                                "player-one",
                                 this.houseDeck, 
                                 "game-board-1", 
                                 "board-total-1", 
                                 "player-hand-1", 
+                                "interact-button-2", 
                                 "play-card-1", 
                                 "end-turn-1"
-
                                 );
         this.playerTwo = new Player("Player Two", 
                                 2,
+                                "player-two",
                                 this.houseDeck,
                                 "game-board-2",
                                 "board-total-2", 
                                 "player-hand-2", 
+                                "interact-button-2",
                                 "play-card-2",
                                 "end-turn-2"
                                 );                                                                                           
@@ -60,9 +63,16 @@ class GameManager {
         player.board.addAllEventListeners(); 
     }
 
-    endTurn(player) {
-        player.turn = false; 
-        player.board.removeAllEventListeners(); 
+    endTurn(endPlayer, nextPlayer) {
+        endPlayer.turn = false; 
+        nextPlayer.turn = true; 
+        if (this.allStanding()) {
+            this.gameEnd(); 
+        } else if (this.nextPlayer.stand) {
+            this.endTurn(nextPlayer, endPlayer); 
+        } else {
+            
+        }
     }
 
     gameEnd() {
@@ -71,5 +81,9 @@ class GameManager {
 
     setEnd() {
 
+    }
+
+    allStanding() {
+        return (this.playerOne.stand && this.playerTwo.stand ? true : false); 
     }
 }
