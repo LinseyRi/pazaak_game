@@ -46,11 +46,11 @@ class EndTurnButton extends Button {
     }
 
     addEndEventListener() {
-        document.getElementById(this.HTMLid).addEventListener("click", this.boundEndTurn); 
+        // document.getElementById(this.HTMLid).addEventListener("click", this.boundEndTurn); 
     }
 
     removeEndEventListener() {
-        document.getElementById(this.HTMLid).removeEventListener("click", this.boundEndTurn); 
+        // document.getElementById(this.HTMLid).removeEventListener("click", this.boundEndTurn); 
     }
 
 }

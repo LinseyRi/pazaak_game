@@ -427,9 +427,9 @@ async function endCompleteRound(player, winState) {
 }
 
 async function endBothTurns(firstPlayer, secondPlayer) {
-    if (firstPlayer.turn) {
-        firstPlayer.turn = false; 
-        secondPlayer.turn = true; 
+    if (firstplayer.isTurn) {
+        firstplayer.isTurn = false; 
+        secondplayer.isTurn = true; 
         if (!firstPlayer.stand) {
             let lastPlayerBox = document.getElementById("player-two");
             lastPlayerBox.classList.remove("current-turn");
@@ -467,9 +467,9 @@ async function endBothTurns(firstPlayer, secondPlayer) {
         if (firstPlayer.stand) {
             endTurn(playerOne, playerOneBoard, "game-board-1", "board-total-1");
         }
-    } else if (secondPlayer.turn) {
-        firstPlayer.turn = true; 
-        secondPlayer.turn = false; 
+    } else if (secondplayer.isTurn) {
+        firstplayer.isTurn = true; 
+        secondplayer.isTurn = false; 
         if (!secondPlayer.stand) {
             let lastPlayerBox = document.getElementById("player-one");
             lastPlayerBox.classList.remove("current-turn");
@@ -573,16 +573,16 @@ async function startNewRound(first) {
         playerTwo.renderHand("player-hand-2");
     }
 
-    playerOne.turn = false; 
-    playerTwo.turn = false; 
+    playerOne.isTurn = false; 
+    playerTwo.isTurn = false; 
     first.turn = true; 
 
     // if (playerOne.lastToWin == false && playerTwo.lastToWin == false) {
     //     // insert pull card from deck chance - run in separate function 
     // } else if (playerOne.lastToWin) {
-    //     playerOne.turn = true; 
+    //     playerOne.isTurn = true; 
     // } else if (playerTwo.lastToWin) {
-    //     playerTwo.turn = true; 
+    //     playerTwo.isTurn = true; 
     // }
 
     

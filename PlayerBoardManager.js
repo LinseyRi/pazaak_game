@@ -50,8 +50,8 @@ class PlayerBoardManager {
         console.log(this.buttonClass); 
         document.getElementById(this.boardid).classList.remove("current-turn");
         let playerButtons = document.getElementsByClassName(this.buttonClass); 
-        for (button of playerButtons) {
-            button.classList.add("temp-disabled-button"); 
+        for (let i = 0; i < playerButtons.length; i++) {
+            playerButtons[i].classList.add("temp-disabled-button"); 
         }
     }
 

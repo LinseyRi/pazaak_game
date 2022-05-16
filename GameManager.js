@@ -22,13 +22,18 @@ class GameManager {
                                 "interact-button-2",
                                 "play-card-2",
                                 "end-turn-2", 
-                                );                                                                                           
+                                );   
+        this.P1endTurnHTMLid = "end-turn-1";
+        this.P2endTurnHTMLid = "end-turn-2";
+        this.boundSwapPlayer = this.swapActivePlayer.bind(this); 
+
     }
 
     startGame(firstPlayer) {
+        this.playerOne.isTurn = true; 
         this.populatePlayer(this.playerOne); 
         this.populatePlayer(this.playerTwo); 
-        firstPlayer.board.activateBoard(); 
+        this.activateBoard(firstPlayer); 
         // firstPlayer.board.addAllEventListeners(); 
         // this.drawFirstCard(firstPlayer); 
     }
@@ -59,27 +64,20 @@ class GameManager {
 
     }
 
-    swapActivePlayer() {
-        if (this.playerOne.turn) {
-            endPlayer = this.playerOne; 
-            nextPlayer = this.playerTwo; 
-        } else if (this.playerTwo.turn) {
-            endPlayer = this.playerTwo;
-            nextPlayer = this.playerOne;  
-        }
-        this.startNextTurn(endPlayer, nextPlayer); 
-    }
+    
 
     startNextTurn(endPlayer, nextPlayer) {
-        endPlayer.turn = false; 
-        nextPlayer.turn = true; 
+        console.log("ending player is: ", endPlayer); 
+        console.log("Next player is: ", nextPlayer); 
+        endPlayer.isTurn = false; 
+        nextPlayer.isTurn = true; 
         if (this.allStanding()) {
             this.gameEnd(); 
         } else if (nextPlayer.stand) {
-            this.endTurn(nextPlayer, endPlayer); 
+            this.startNextTurn(nextPlayer, endPlayer); 
         } else {
-            endPlayer.board.deactivateBoard(); 
-            nextPlayer.board.activateBoard(); 
+            this.deactivateBoard(endPlayer); 
+            this.activateBoard(nextPlayer); 
         }
     }
 
@@ -93,5 +91,39 @@ class GameManager {
 
     allStanding() {
         return (this.playerOne.stand && this.playerTwo.stand ? true : false); 
+    }
+
+    activateBoard(player) {
+        console.log("Adding on click...");
+        console.log(player.number);  
+        if (player.number == 1) {
+            document.getElementById(this.P1endTurnHTMLid).addEventListener("click", this.boundSwapPlayer);
+        } else if (player.number == 2) {
+            document.getElementById(this.P2endTurnHTMLid).addEventListener("click", this.boundSwapPlayer);
+        }
+        player.board.activateBoard(); 
+    }
+
+    deactivateBoard(player) {
+        if (player.number == 1) {
+            document.getElementById(this.P1endTurnHTMLid).removeEventListener("click", this.boundSwapPlayer);
+        } else if (player.number == 2) {
+            document.getElementById(this.P2endTurnHTMLid).removeEventListener("click", this.boundSwapPlayer);
+        }
+        player.board.deactivateBoard(); 
+    }
+
+    swapActivePlayer() {
+        console.log("Swapping..."); 
+        let endPlayer; 
+        let nextPlayer; 
+        if (this.playerOne.isTurn) {
+            endPlayer = this.playerOne; 
+            nextPlayer = this.playerTwo; 
+        } else if (this.playerTwo.isTurn) {
+            endPlayer = this.playerTwo;
+            nextPlayer = this.playerOne;  
+        } 
+        this.startNextTurn(endPlayer, nextPlayer); 
     }
 }
