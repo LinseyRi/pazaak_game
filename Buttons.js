@@ -1,9 +1,9 @@
 class Button {
-    constructor(player, handBoard, gameBoard, buttonHTMLid) {
+    constructor(player, handBoard, gameBoard, buttonHTMLid, gameManager) {
         this.player = player; 
         this.handBoard = handBoard; 
         this.gameBoard = gameBoard; 
-        this.HTMLid = buttonHTMLid; 
+        this.HTMLid = buttonHTMLid;
     }
 
 
@@ -41,10 +41,8 @@ class EndTurnButton extends Button {
     }
     
     endTurn() { 
-        this.player.playedInTurn = false; 
-        console.log("Player standing: ", this.player.stand); 
-        this.gameBoard.checkIfPlayerStand(); 
-        this.gameBoard.houseToLay(); 
+        console.log("Game manager is: "); 
+        // this.gameManager.swapActivePlayer(); 
     }
 
     addEndEventListener() {

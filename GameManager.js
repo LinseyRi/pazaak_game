@@ -10,7 +10,7 @@ class GameManager {
                                 "player-hand-1", 
                                 "interact-button-2", 
                                 "play-card-1", 
-                                "end-turn-1"
+                                "end-turn-1", 
                                 );
         this.playerTwo = new Player("Player Two", 
                                 2,
@@ -21,15 +21,16 @@ class GameManager {
                                 "player-hand-2", 
                                 "interact-button-2",
                                 "play-card-2",
-                                "end-turn-2"
+                                "end-turn-2", 
                                 );                                                                                           
     }
 
     startGame(firstPlayer) {
         this.populatePlayer(this.playerOne); 
         this.populatePlayer(this.playerTwo); 
-        firstPlayer.board.addAllEventListeners(); 
-        this.drawFirstCard(firstPlayer); 
+        firstPlayer.board.activateBoard(); 
+        // firstPlayer.board.addAllEventListeners(); 
+        // this.drawFirstCard(firstPlayer); 
     }
 
     populatePlayer(player) {
@@ -58,20 +59,27 @@ class GameManager {
 
     }
 
-    startTurn(player) {
-        player.turn = true;
-        player.board.addAllEventListeners(); 
+    swapActivePlayer() {
+        if (this.playerOne.turn) {
+            endPlayer = this.playerOne; 
+            nextPlayer = this.playerTwo; 
+        } else if (this.playerTwo.turn) {
+            endPlayer = this.playerTwo;
+            nextPlayer = this.playerOne;  
+        }
+        this.startNextTurn(endPlayer, nextPlayer); 
     }
 
-    endTurn(endPlayer, nextPlayer) {
+    startNextTurn(endPlayer, nextPlayer) {
         endPlayer.turn = false; 
         nextPlayer.turn = true; 
         if (this.allStanding()) {
             this.gameEnd(); 
-        } else if (this.nextPlayer.stand) {
+        } else if (nextPlayer.stand) {
             this.endTurn(nextPlayer, endPlayer); 
         } else {
-            
+            endPlayer.board.deactivateBoard(); 
+            nextPlayer.board.activateBoard(); 
         }
     }
 

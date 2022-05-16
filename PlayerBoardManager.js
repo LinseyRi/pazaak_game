@@ -7,6 +7,8 @@ class PlayerBoardManager {
         this.buttonClass = buttonClassid;  
         this.playButton = new PlayCardButton(player, this.handBoard, this.gameBoard, playid);
         this.endButton = new EndTurnButton(player, this.handBoard, this.gameBoard, endid); 
+        this.playButtonHTMLid = playid; 
+        this.endButtonHTMLid = endid; 
     }
 
     checkStanding() { 
@@ -16,6 +18,7 @@ class PlayerBoardManager {
     }
 
     activateBoard() {
+        this.gameBoard.houseToLay(); 
         this.addAllEventListeners(); 
         this.activateCSS(); 
     }
@@ -38,12 +41,13 @@ class PlayerBoardManager {
     activateCSS() {
         document.getElementById(this.boardid).classList.add("current-turn"); 
         let playerButtons = document.getElementsByClassName(this.buttonClass); 
-        for (button of playerButtons) {
-            button.classList.remove("temp-disabled-button"); 
-        } 
+        for (let i = 0; i < playerButtons.length; i++) {
+            playerButtons[i].classList.remove("temp-disabled-button"); 
+        }
     }
 
     deactivateCSS() {
+        console.log(this.buttonClass); 
         document.getElementById(this.boardid).classList.remove("current-turn");
         let playerButtons = document.getElementsByClassName(this.buttonClass); 
         for (button of playerButtons) {
