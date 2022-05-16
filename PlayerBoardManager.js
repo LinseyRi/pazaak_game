@@ -6,9 +6,8 @@ class PlayerBoardManager {
         this.handBoard = new HandBoard(player, handHTMLid); 
         this.buttonClass = buttonClassid;  
         this.playButton = new PlayCardButton(player, this.handBoard, this.gameBoard, playid);
-        this.endButton = new EndTurnButton(player, this.handBoard, this.gameBoard, endid); 
         this.playButtonHTMLid = playid; 
-        this.endButtonHTMLid = endid; 
+        this.endButtonHTMLid = endid; // might be a redundant line 
     }
 
     checkStanding() { 
@@ -30,12 +29,10 @@ class PlayerBoardManager {
 
     addAllEventListeners() {
         this.playButton.addPlayEventListener(); 
-        this.endButton.addEndEventListener();
     }
 
     removeAllEventListeners() {
         this.playButton.removePlayEventListener(); 
-        this.endButton.removeEndEventListener(); 
     }
 
     activateCSS() {

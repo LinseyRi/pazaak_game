@@ -34,26 +34,6 @@ class PlayCardButton extends Button {
     }
 }
 
-class EndTurnButton extends Button {
-    constructor(player, handBoard, gameBoard, buttonHTMLid) {
-        super(player, handBoard, gameBoard, buttonHTMLid)
-        this.boundEndTurn = this.endTurn.bind(this); 
-    }
-    
-    endTurn() { 
-        console.log("Game manager is: "); 
-        // this.gameManager.swapActivePlayer(); 
-    }
-
-    addEndEventListener() {
-        // document.getElementById(this.HTMLid).addEventListener("click", this.boundEndTurn); 
-    }
-
-    removeEndEventListener() {
-        // document.getElementById(this.HTMLid).removeEventListener("click", this.boundEndTurn); 
-    }
-
-}
 
 class StandButton extends Button {
     constructor(player, handBoard, gameBoard, buttonHTMLid) {

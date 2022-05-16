@@ -25,8 +25,14 @@ class GameManager {
                                 );   
         this.P1endTurnHTMLid = "end-turn-1";
         this.P2endTurnHTMLid = "end-turn-2";
-        this.boundSwapPlayer = this.swapActivePlayer.bind(this); 
+        this.boundEndTurn = this.testEndGame.bind(this); 
 
+    }
+
+
+    populatePlayer(player) {
+        player.board.handBoard.showHandOnPage(); 
+        player.board.gameBoard.updateTotal(); 
     }
 
     startGame(firstPlayer) {
@@ -34,41 +40,9 @@ class GameManager {
         this.populatePlayer(this.playerOne); 
         this.populatePlayer(this.playerTwo); 
         this.activateBoard(firstPlayer); 
-        // firstPlayer.board.addAllEventListeners(); 
-        // this.drawFirstCard(firstPlayer); 
     }
-
-    populatePlayer(player) {
-        player.board.handBoard.showHandOnPage(); 
-        player.board.gameBoard.updateTotal(); 
-    }
-
-    drawFirstCard(player) {
-        let card = this.houseDeck.drawCard(); 
-        player.board.gameBoard.layCardOnBoard(card, true); 
-    } 
-
-    testEndGame() {
-        if (this.playerOne.stand && this.playerTwo.stand) {
-            this.endGame(); 
-            return true; 
-        } else {
-            return false; 
-        }
-    }
-
-    roundEnd() {
-        if(!this.testEndGame()) {
-
-        }
-
-    }
-
-    
 
     startNextTurn(endPlayer, nextPlayer) {
-        console.log("ending player is: ", endPlayer); 
-        console.log("Next player is: ", nextPlayer); 
         endPlayer.isTurn = false; 
         nextPlayer.isTurn = true; 
         if (this.allStanding()) {
@@ -81,8 +55,23 @@ class GameManager {
         }
     }
 
-    gameEnd() {
+    testEndGame() { // TODO 
+        if (this.playerOne.stand && this.playerTwo.stand) {
+            this.gameEnd(); 
+        } else {
+            this.swapActivePlayer(); 
+        }
+    }
 
+    roundEnd() {
+        if(!this.testEndGame()) {
+
+        }
+
+    }
+
+    gameEnd() {
+        console.log("You've reached the end"); 
     }
 
     setEnd() {
@@ -94,27 +83,24 @@ class GameManager {
     }
 
     activateBoard(player) {
-        console.log("Adding on click...");
-        console.log(player.number);  
         if (player.number == 1) {
-            document.getElementById(this.P1endTurnHTMLid).addEventListener("click", this.boundSwapPlayer);
+            document.getElementById(this.P1endTurnHTMLid).addEventListener("click", this.boundEndTurn);
         } else if (player.number == 2) {
-            document.getElementById(this.P2endTurnHTMLid).addEventListener("click", this.boundSwapPlayer);
+            document.getElementById(this.P2endTurnHTMLid).addEventListener("click", this.boundEndTurn);
         }
         player.board.activateBoard(); 
     }
 
     deactivateBoard(player) {
         if (player.number == 1) {
-            document.getElementById(this.P1endTurnHTMLid).removeEventListener("click", this.boundSwapPlayer);
+            document.getElementById(this.P1endTurnHTMLid).removeEventListener("click", this.boundEndTurn);
         } else if (player.number == 2) {
-            document.getElementById(this.P2endTurnHTMLid).removeEventListener("click", this.boundSwapPlayer);
+            document.getElementById(this.P2endTurnHTMLid).removeEventListener("click", this.boundEndTurn);
         }
         player.board.deactivateBoard(); 
     }
 
     swapActivePlayer() {
-        console.log("Swapping..."); 
         let endPlayer; 
         let nextPlayer; 
         if (this.playerOne.isTurn) {
@@ -124,6 +110,13 @@ class GameManager {
             endPlayer = this.playerTwo;
             nextPlayer = this.playerOne;  
         } 
+        this.testForcedStand(endPlayer); 
         this.startNextTurn(endPlayer, nextPlayer); 
     }
+
+    testForcedStand(player) {
+        if (player.board.gameBoard.total > 20 && !player.stand) {
+            player.stand = true; 
+        }
+    } 
 }
